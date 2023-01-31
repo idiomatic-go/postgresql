@@ -22,17 +22,17 @@ func (r *rowsT) Values() ([]any, error)                { return nil, nil }
 func (r *rowsT) RawValues() [][]byte                   { return nil }
 
 const (
-	queryErrorSql  = "select * from test"
-	queryRowsSql   = "select * from table"
-	queryErrorPath = "query.error"
-	queryRowsPath  = "query.rows"
+	queryErrorSql = "select * from test"
+	queryRowsSql  = "select * from table"
+	queryErrorRsc = "error"
+	queryRowsRsc  = "rows"
 )
 
 func queryTestProxy(req Request) (Rows, error) {
 	switch req.Uri {
-	case BuildUri(queryErrorPath):
+	case BuildQueryUri(queryErrorRsc):
 		return nil, errors.New("sqldml query error")
-	case BuildUri(queryRowsPath):
+	case BuildQueryUri(queryRowsRsc):
 		var i Rows = &rowsT{}
 		return i, nil
 	}
@@ -42,17 +42,17 @@ func queryTestProxy(req Request) (Rows, error) {
 var qCtx = ContextWithQuery(context.Background(), queryTestProxy)
 
 func ExampleQuery_Error() {
-	rows, status := Query[template.DebugError](qCtx, NewRequest(queryErrorPath, queryErrorSql))
+	rows, status := Query[template.DebugError](qCtx, NewQueryRequest(queryErrorRsc, queryErrorSql))
 	fmt.Printf("test: Query[template.DebugError](ctx,%v) -> [rows:%v] [status:%v] \n", queryErrorSql, rows, status)
 
 	//Output:
-	//[[] github.com/idiomatic-go/postgresql-adapter/pgxsql/exec [sqldml query error]]
+	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [sqldml query error]]
 	//test: Query[template.DebugError](ctx,select * from test) -> [rows:<nil>] [status:Internal]
-	
+
 }
 
 func ExampleQuery_Rows() {
-	rows, status := Query[template.DebugError](qCtx, NewRequest(queryRowsPath, queryRowsSql))
+	rows, status := Query[template.DebugError](qCtx, NewQueryRequest(queryRowsRsc, queryRowsSql))
 	fmt.Printf("test: Query[template.DebugError](ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, rows, status, rows.CommandTag())
 
 	//Output:

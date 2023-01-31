@@ -8,11 +8,6 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-const (
-//QueryScheme = "sqldml"
-//ProxyryPro
-)
-
 type FieldDescription struct {
 	Name                 string
 	TableOID             uint32

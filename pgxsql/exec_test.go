@@ -15,17 +15,17 @@ func NilEmpty(s string) string {
 }
 
 const (
-	execUpdateSql  = "update test"
-	execInsertSql  = "insert test"
-	execUpdatePath = "exec.update"
-	execInsertPath = "exec.insert"
+	execUpdateSql = "update test"
+	execInsertSql = "insert test"
+	execUpdateRsc = "update"
+	execInsertRsc = "insert"
 )
 
 func execTestProxy(req Request) (CommandTag, error) {
 	switch req.Uri {
-	case BuildUri(execUpdatePath):
+	case BuildExecUri(execUpdateRsc):
 		return emptyCommandTag, errors.New("exec error")
-	case BuildUri(execInsertPath):
+	case BuildExecUri(execInsertRsc):
 		return CommandTag{
 			Sql:          req.Sql,
 			RowsAffected: 1234,
@@ -41,14 +41,14 @@ func execTestProxy(req Request) (CommandTag, error) {
 func ExampleExec() {
 	ctx := ContextWithExec(context.Background(), execTestProxy)
 
-	cmd, status := Exec[template.DebugError](ctx, NewRequest(execUpdatePath, execUpdateSql))
+	cmd, status := Exec[template.DebugError](ctx, NewExecRequest(execUpdateRsc, execUpdateSql))
 	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execUpdateSql, status, cmd)
 
-	cmd, status = Exec[template.DebugError](ctx, NewRequest(execInsertPath, execInsertSql))
+	cmd, status = Exec[template.DebugError](ctx, NewExecRequest(execInsertRsc, execInsertSql))
 	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
 
 	//Output:
-	//[[] github.com/idiomatic-go/postgresql-adapter/pgxsql/exec [exec error]]
+	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [exec error]]
 	//test: Exec(update test) -> Internal [cmd:{ 0 false false false false}]
 	//test: Exec(insert test) -> OK [cmd:{insert test 1234 true false false false}]
 
