@@ -23,10 +23,10 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 	start := time.Now()
 	db := messaging.AccessDatabaseUrl(&msg)
 	credentials := messaging.AccessCredentials(&msg)
-	if credentials == nil {
-		messaging.ReplyTo(msg, template.NewStatusError(clientLoc, errors.New("credentials function is nil")).SetDuration(time.Since(start)))
-		return
-	}
+	//if credentials == nil {
+	//	messaging.ReplyTo(msg, template.NewStatusError(clientLoc, errors.New("credentials function is nil")).SetDuration(time.Since(start)))
+	//	return
+	//}
 	err := ClientStartup(db, credentials)
 	if err != nil {
 		messaging.ReplyTo(msg, template.NewStatusError(clientLoc, err).SetDuration(time.Since(start)))

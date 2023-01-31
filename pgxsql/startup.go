@@ -18,7 +18,9 @@ var (
 	actuatorApply template.ActuatorApply
 )
 
-func IsStarted() bool { return atomic.LoadInt64(&started) != 0 }
+func IsStarted() bool {
+	return atomic.LoadInt64(&started) != 0
+}
 
 func setStarted() {
 	atomic.StoreInt64(&started, 1)
