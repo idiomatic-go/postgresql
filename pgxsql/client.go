@@ -1,9 +1,6 @@
 package pgxsql
 
 // DATABASE_URL=postgres://{user}:{password}@{hostname}:{port}/{database-name}
-// psql -x "postgres://tsdbadmin@t9aggksc24.gspnhi29bv.tsdb.cloud.timescale.com:33251/tsdb?sslmode=require"
-// Password for user tsdbadmin:
-
 // https://pkg.go.dev/github.com/jackc/pgx/v5/pgtype
 
 import (
@@ -11,16 +8,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/idiomatic-go/middleware/messaging"
-	"github.com/idiomatic-go/middleware/runtime"
 	"github.com/idiomatic-go/middleware/template"
-	"github.com/idiomatic-go/postgresql/resource"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
-)
-
-const (
-	configNameFmt  = "fs/pgxsql/config_%v.json"
-	DatabaseURLKey = "DATABASE_URL"
 )
 
 var dbClient *pgxpool.Pool
@@ -31,18 +21,13 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 		return
 	}
 	start := time.Now()
-	name := runtime.EnvExpansion(configNameFmt)
-	m, err := resource.ReadMap(name)
-	if err != nil {
-		messaging.ReplyTo(msg, template.NewStatusError(clientLoc, errors.New(fmt.Sprintf("error reading configuration file: %v", name))).SetDuration(time.Since(start)))
-		return
-	}
+	db := messaging.AccessDatabaseUrl(&msg)
 	credentials := messaging.AccessCredentials(&msg)
 	if credentials == nil {
 		messaging.ReplyTo(msg, template.NewStatusError(clientLoc, errors.New("credentials function is nil")).SetDuration(time.Since(start)))
 		return
 	}
-	err = ClientStartup(m, credentials)
+	err := ClientStartup(db, credentials)
 	if err != nil {
 		messaging.ReplyTo(msg, template.NewStatusError(clientLoc, err).SetDuration(time.Since(start)))
 		return
@@ -50,17 +35,15 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 	messaging.ReplyTo(msg, template.NewStatusOK().SetDuration(time.Since(start)))
 }
 
-func ClientStartup(config map[string]string, credentials messaging.Credentials) error {
+func ClientStartup(db messaging.DatabaseUrl, credentials messaging.Credentials) error {
 	if IsStarted() {
 		return nil
 	}
-	// Access database URL
-	url, ok := config[DatabaseURLKey]
-	if !ok || url == "" {
-		return errors.New(fmt.Sprintf("database URL does not exist in map, or value is empty : %v\n", DatabaseURLKey))
+	if db.Url == "" {
+		return errors.New("database URL is empty")
 	}
 	// Create connection string with credentials
-	s, err := connectString(url, credentials)
+	s, err := connectString(db.Url, credentials)
 	if err != nil {
 		return err
 	}
@@ -88,7 +71,7 @@ func ClientShutdown() {
 }
 
 func connectString(url string, credentials messaging.Credentials) (string, error) {
-	// Username and password can b in the connect string Url
+	// Username and password can be in the connect string Url
 	if credentials == nil {
 		return url, nil
 	}

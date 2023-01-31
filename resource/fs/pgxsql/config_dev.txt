@@ -1,4 +1,0 @@
-// this is the test environment
-env : dev
-next  : second value
-timeout : 10020
