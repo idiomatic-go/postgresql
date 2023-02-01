@@ -76,11 +76,11 @@ func ExecWithCommand[E template.ErrorHandler](ctx context.Context, tag *CommandT
 	}
 	t, err := dbClient.Exec(ctx, req.Sql, arguments)
 	if err != nil {
-		err0 := txn.Rollback(ctx)
+		err0 = txn.Rollback(ctx)
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err, err0)
 	}
 	if tag != nil && t.RowsAffected() != tag.RowsAffected {
-		err0 := txn.Rollback(ctx)
+		err0 = txn.Rollback(ctx)
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, errors.New(fmt.Sprintf("error exec statement [%v] : actual RowsAffected %v != expected RowsAffected %v", t.String(), t.RowsAffected(), tag.RowsAffected)), err0)
 	}
 	err = txn.Commit(ctx)

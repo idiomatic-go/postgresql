@@ -24,5 +24,5 @@ func Stat[E template.ErrorHandler](ctx context.Context) (stat *pgxpool.Stat, sta
 	if dbClient == nil {
 		return nil, e.HandleWithContext(ctx, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetCode(template.StatusInvalidArgument)
 	}
-	return dbClient.Stat(), nil
+	return dbClient.Stat(), template.NewStatusOK()
 }

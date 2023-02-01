@@ -5,7 +5,7 @@ import (
 	"github.com/idiomatic-go/middleware/messaging"
 )
 
-func Example_Startup() {
+func ExampleClientStartup() {
 
 	db := messaging.DatabaseUrl{Url: ""}
 	err := ClientStartup(db, nil)
