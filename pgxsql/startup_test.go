@@ -1,20 +1,27 @@
 package pgxsql
 
 import (
+	"errors"
 	"fmt"
 	"github.com/idiomatic-go/middleware/messaging"
 	"time"
 )
 
 const (
-	serviceUrl = "postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
+	serviceUrlFmt = "postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
+	serviceUrl    = ""
 )
 
 func Example_Startup() {
 	fmt.Printf("test: IsStarted() -> %v\n", IsStarted())
-	startup()
-	fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
-	defer ClientShutdown()
+	err := testStartup()
+	if err != nil {
+		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
+	} else {
+		defer ClientShutdown()
+		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
+
+	}
 
 	//Output:
 	//test: IsStarted() -> false
@@ -22,7 +29,10 @@ func Example_Startup() {
 
 }
 
-func startup() {
+func testStartup() error {
+	if serviceUrl == "" {
+		return errors.New("error running testStartup(): service url is empty")
+	}
 	c <- messaging.Message{
 		To:      "",
 		From:    "",
@@ -32,4 +42,5 @@ func startup() {
 		ReplyTo: nil,
 	}
 	time.Sleep(time.Second * 3)
+	return nil
 }

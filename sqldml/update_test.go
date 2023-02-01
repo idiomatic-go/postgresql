@@ -56,24 +56,24 @@ func ExampleWriteUpdateSet() {
 	//Error      : <nil>
 }
 
-func ExampleWriteUpdateWhere() {
+func ExampleWriteWhere() {
 	sb := strings.Builder{}
 
-	err := WriteUpdateWhere(&sb, nil)
+	err := WriteWhere(&sb, nil)
 	fmt.Printf("Stmt       : %v\n", NilEmpty(sb.String()))
 	fmt.Printf("Error      : %v\n", err)
 
-	err = WriteUpdateWhere(&sb, []Attr{{Name: "", Val: nil}})
+	err = WriteWhere(&sb, []Attr{{Name: "", Val: nil}})
 	fmt.Printf("Stmt       : %v\n", NilEmpty(strings.Trim(sb.String(), " ")))
 	fmt.Printf("Error      : %v\n", err)
 
 	sb.Reset()
-	err = WriteUpdateWhere(&sb, []Attr{{Name: "status_code", Val: "503"}})
+	err = WriteWhere(&sb, []Attr{{Name: "status_code", Val: "503"}})
 	fmt.Printf("Stmt       : %v\n", NilEmpty(sb.String()))
 	fmt.Printf("Error      : %v\n", err)
 
 	sb.Reset()
-	err = WriteUpdateWhere(&sb, []Attr{{Name: "status_code", Val: "503"}, {Name: "minimum_code", Val: 99}, {Name: "created_ts", Val: Function("now()")}})
+	err = WriteWhere(&sb, []Attr{{Name: "status_code", Val: "503"}, {Name: "minimum_code", Val: 99}, {Name: "created_ts", Val: Function("now()")}})
 	fmt.Printf("Stmt       : %v\n", NilEmpty(sb.String()))
 	fmt.Printf("Error      : %v\n", err)
 

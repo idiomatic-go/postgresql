@@ -6,9 +6,8 @@ import (
 )
 
 const (
-	InsertEntryStmt    = "INSERT INTO test_entry (id,customer_id,category,traffic_type,traffic_protocol,threshold_percent,name,application,route_name,filter_status_codes,status_codes) VALUES"
-	NextValFn          = "nextval('test_entry_Id')"
-	ChangedTimestampFn = "now()"
+	InsertEntryStmt = "INSERT INTO test_entry (id,customer_id,category,traffic_type,traffic_protocol,threshold_percent,name,application,route_name,filter_status_codes,status_codes) VALUES"
+	NextValFn       = "nextval('test_entry_Id')"
 )
 
 func NilEmpty(s string) string {
@@ -54,5 +53,5 @@ func ExampleWriteInsertValues() {
 	//Error   : <nil>
 	//Stmt    : (100,'test string',false,nextval('test_entry_Id'),now())
 	//Error   : <nil>
-	
+
 }

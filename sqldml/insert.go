@@ -14,6 +14,10 @@ INSERT INTO table_name (column_list) VALUES
 
 */
 
+const (
+	ChangedTimestampFn = "now()"
+)
+
 func WriteInsert(sql string, values []any) (string, error) {
 	sb := strings.Builder{}
 

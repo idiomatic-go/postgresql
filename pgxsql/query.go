@@ -122,7 +122,7 @@ func (r *rows) RawValues() [][]byte {
 	return r.pgxRows.RawValues()
 }
 
-func Query[E template.ErrorHandler](ctx context.Context, req Request, arguments ...any) (result Rows, status *template.Status) {
+func Query[E template.ErrorHandler](ctx context.Context, req Request, args ...any) (result Rows, status *template.Status) {
 	var e E
 	var limited = false
 	var fn template.ActuatorComplete
@@ -141,7 +141,7 @@ func Query[E template.ErrorHandler](ctx context.Context, req Request, arguments 
 	if dbClient == nil {
 		return nil, e.HandleWithContext(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(template.StatusInvalidArgument)
 	}
-	pgxRows, err := dbClient.Query(ctx, req.Sql, arguments)
+	pgxRows, err := dbClient.Query(ctx, req.Sql, args...)
 	if err != nil {
 		return nil, e.HandleWithContext(ctx, queryLoc, err)
 	}

@@ -47,11 +47,25 @@ func ExecUpdate[E template.ErrorHandler](ctx context.Context, tag *CommandTag, r
 	return ExecWithCommand[E](ctx, tag, Request{Uri: req.Uri, Sql: stmt})
 }
 
+func ExecDelete[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, where []sqldml.Attr) (CommandTag, *template.Status) {
+	var e E
+
+	if IsContextExec(ctx) {
+		newTag, err := ContextExec(ctx, req)
+		return newTag, e.HandleWithContext(ctx, execLoc, err)
+	}
+	stmt, err := sqldml.WriteDelete(req.Sql, where)
+	if err != nil {
+		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
+	}
+	return ExecWithCommand[E](ctx, tag, Request{Uri: req.Uri, Sql: stmt})
+}
+
 func Exec[E template.ErrorHandler](ctx context.Context, req Request, arguments ...any) (CommandTag, *template.Status) {
 	return ExecWithCommand[E](ctx, nil, req, arguments)
 }
 
-func ExecWithCommand[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, arguments ...any) (_ CommandTag, status *template.Status) {
+func ExecWithCommand[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, args ...any) (_ CommandTag, status *template.Status) {
 	var e E
 	var limited = false
 	var fn template.ActuatorComplete
@@ -74,7 +88,7 @@ func ExecWithCommand[E template.ErrorHandler](ctx context.Context, tag *CommandT
 	if err0 != nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err0)
 	}
-	t, err := dbClient.Exec(ctx, req.Sql, arguments)
+	t, err := dbClient.Exec(ctx, req.Sql, args...)
 	if err != nil {
 		err0 = txn.Rollback(ctx)
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err, err0)

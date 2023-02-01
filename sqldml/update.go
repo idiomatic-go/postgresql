@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	where = "WHERE "
-	and   = " AND "
-	set   = "SET "
+	Where = "WHERE "
+	And   = " AND "
+	Set   = "SET "
 )
 
 /*
@@ -29,7 +29,7 @@ func WriteUpdate(sql string, attrs []Attr, where []Attr) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = WriteUpdateWhere(&sb, where)
+	err = WriteWhere(&sb, where)
 	return sb.String(), err
 }
 
@@ -38,7 +38,7 @@ func WriteUpdateSet(sb *strings.Builder, attrs []Attr) error {
 	if max < 0 {
 		return errors.New("invalid update set argument, attrs slice is empty")
 	}
-	sb.WriteString(set)
+	sb.WriteString(Set)
 	for i, attr := range attrs {
 		s, err := FmtAttr(attr)
 		if err != nil {
@@ -53,12 +53,12 @@ func WriteUpdateSet(sb *strings.Builder, attrs []Attr) error {
 	return nil
 }
 
-func WriteUpdateWhere(sb *strings.Builder, attrs []Attr) error {
+func WriteWhere(sb *strings.Builder, attrs []Attr) error {
 	max := len(attrs) - 1
 	if max < 0 {
 		return errors.New("invalid update where argument, attrs slice is empty")
 	}
-	sb.WriteString(where)
+	sb.WriteString(Where)
 	for i, attr := range attrs {
 		s, err := FmtAttr(attr)
 		if err != nil {
@@ -66,7 +66,7 @@ func WriteUpdateWhere(sb *strings.Builder, attrs []Attr) error {
 		}
 		sb.WriteString(s)
 		if i < max {
-			sb.WriteString(and)
+			sb.WriteString(And)
 		}
 	}
 	sb.WriteString(";")
