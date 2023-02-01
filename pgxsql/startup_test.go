@@ -33,6 +33,9 @@ func testStartup() error {
 	if serviceUrl == "" {
 		return errors.New("error running testStartup(): service url is empty")
 	}
+	if IsStarted() {
+		return nil
+	}
 	c <- messaging.Message{
 		To:      "",
 		From:    "",
