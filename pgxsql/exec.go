@@ -23,8 +23,8 @@ func ExecInsert[E template.ErrorHandler](ctx context.Context, tag *CommandTag, r
 	var e E
 
 	if IsContextExec(ctx) {
-		tag, err := ContextExec(ctx, req)
-		return tag, e.HandleWithContext(ctx, execLoc, err)
+		newTag, err := ContextExec(ctx, req)
+		return newTag, e.HandleWithContext(ctx, execLoc, err)
 	}
 	stmt, err := sqldml.WriteInsert(req.Sql, values)
 	if err != nil {
@@ -37,8 +37,8 @@ func ExecUpdate[E template.ErrorHandler](ctx context.Context, tag *CommandTag, r
 	var e E
 
 	if IsContextExec(ctx) {
-		tag, err := ContextExec(ctx, req)
-		return tag, e.HandleWithContext(ctx, execLoc, err)
+		newTag, err := ContextExec(ctx, req)
+		return newTag, e.HandleWithContext(ctx, execLoc, err)
 	}
 	stmt, err := sqldml.WriteUpdate(req.Sql, attrs, where)
 	if err != nil {
@@ -56,6 +56,7 @@ func ExecWithCommand[E template.ErrorHandler](ctx context.Context, tag *CommandT
 	var limited = false
 	var fn template.ActuatorComplete
 
+	ctx = template.IfElse[context.Context](ctx != nil, ctx, context.Background())
 	fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, template.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
