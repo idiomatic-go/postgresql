@@ -70,7 +70,9 @@ func ExecWithCommand[E template.ErrorHandler](ctx context.Context, tag *CommandT
 	var limited = false
 	var fn template.ActuatorComplete
 
-	ctx = template.IfElse[context.Context](ctx != nil, ctx, context.Background())
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, template.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {

@@ -15,7 +15,9 @@ func Ping[E template.ErrorHandler](ctx context.Context) (status *template.Status
 	var limited = false
 	var fn template.ActuatorComplete
 
-	ctx = template.IfElse[context.Context](ctx != nil, ctx, context.Background())
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	fn, ctx, limited = actuatorApply(ctx, &status, PingUri, template.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
