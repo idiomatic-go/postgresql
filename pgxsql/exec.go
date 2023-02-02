@@ -91,7 +91,7 @@ func ExecWithCommand[E template.ErrorHandler](ctx context.Context, tag *CommandT
 	t, err := dbClient.Exec(ctx, req.Sql, args...)
 	if err != nil {
 		err0 = txn.Rollback(ctx)
-		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err, err0)
+		return CommandTag{}, e.HandleWithContext(ctx, execLoc, recast(err), err0)
 	}
 	if tag != nil && t.RowsAffected() != tag.RowsAffected {
 		err0 = txn.Rollback(ctx)
