@@ -77,7 +77,7 @@ func ExampleExec_Insert() {
 		//stmt, err := sqldml.WriteInsert(req.Sql, values)
 		//fmt.Printf("test: WriteInsert() -> [error:%v] [sql:%v}\n", err, stmt)
 
-		results, status := ExecInsert[template.DebugError](nil, nil, req, []any{sqldml.Function(sqldml.ChangedTimestampFn), cond.Location, cond.Temperature})
+		results, status := ExecInsert[template.DebugError](nil, nil, req, sqldml.Values([]any{sqldml.Function(sqldml.ChangedTimestampFn), cond.Location, cond.Temperature}))
 		if !status.OK() {
 			fmt.Printf("test: ExecInsert[template.DebugError](nil,%v) -> [status:%v] [tag:%v}\n", execInsertConditions, status, results)
 		} else {

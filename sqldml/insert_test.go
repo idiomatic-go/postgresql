@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	InsertEntryStmt = "INSERT INTO test_entry (id,customer_id,category,traffic_type,traffic_protocol,threshold_percent,name,application,route_name,filter_status_codes,status_codes) VALUES"
-	NextValFn       = "nextval('test_entry_Id')"
+	insertEntryStmt = "INSERT INTO test_entry (id,customer_id,ping_traffic,counter_value,changed_ts) VALUES"
+	nextValFn       = "nextval('test_entry_Id')"
 )
 
 func NilEmpty(s string) string {
@@ -18,15 +18,17 @@ func NilEmpty(s string) string {
 }
 
 func ExampleWriteInsert() {
-	stmt, err := WriteInsert(InsertEntryStmt, []any{100, "test string", false, Function(NextValFn), Function(ChangedTimestampFn)})
-	fmt.Printf("Stmt    : %v\n", stmt)
-	fmt.Printf("Error   : %v\n", err)
+	var values [][]any
+	values = append(values, []any{100, "customer 1", false, Function(nextValFn), Function(ChangedTimestampFn)})
+	values = append(values, []any{200, "customer 2", true, Function(nextValFn), Function(ChangedTimestampFn)})
+
+	stmt, err := WriteInsert(insertEntryStmt, values)
+	fmt.Printf("test: WriteInsert() -> [error:%v] [stmt:%v\n", err, stmt)
 
 	//Output:
-	//Stmt    : INSERT INTO test_entry (id,customer_id,category,traffic_type,traffic_protocol,threshold_percent,name,application,route_name,filter_status_codes,status_codes) VALUES
-	//(100,'test string',false,nextval('test_entry_Id'),now());
-	//
-	//Error   : <nil>
+	//test: WriteInsert() -> [error:<nil>] [stmt:INSERT INTO test_entry (id,customer_id,ping_traffic,counter_value,changed_ts) VALUES
+	//(100,'customer 1',false,nextval('test_entry_Id'),now()),
+	//(200,'customer 2',true,nextval('test_entry_Id'),now());
 
 }
 
@@ -34,24 +36,18 @@ func ExampleWriteInsertValues() {
 	sb := strings.Builder{}
 
 	err := WriteInsertValues(&sb, nil)
-	fmt.Printf("Stmt    : %v\n", NilEmpty(sb.String()))
-	fmt.Printf("Error   : %v\n", err)
+	fmt.Printf("test: WriteInsertValues() -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	sb1 := strings.Builder{}
 	err = WriteInsertValues(&sb1, []any{100})
-	fmt.Printf("Stmt    : %v\n", sb1.String())
-	fmt.Printf("Error   : %v\n", err)
+	fmt.Printf("test: WriteInsertValues() -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb1.String()))
 
-	err = WriteInsertValues(&sb, []any{100, "test string", false, Function(NextValFn), Function(ChangedTimestampFn)})
-	fmt.Printf("Stmt    : %v\n", sb.String())
-	fmt.Printf("Error   : %v\n", err)
+	err = WriteInsertValues(&sb, []any{100, "test string", false, Function(nextValFn), Function(ChangedTimestampFn)})
+	fmt.Printf("test: WriteInsertValues() -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	//Output:
-	//Stmt    : <nil>
-	//Error   : invalid insert argument, values slice is empty
-	//Stmt    : (100)
-	//Error   : <nil>
-	//Stmt    : (100,'test string',false,nextval('test_entry_Id'),now())
-	//Error   : <nil>
+	//test: WriteInsertValues() -> [error:invalid insert argument, values slice is empty] [stmt:<nil>]
+	//test: WriteInsertValues() -> [error:<nil>] [stmt:(100)]
+	//test: WriteInsertValues() -> [error:<nil>] [stmt:(100,'test string',false,nextval('test_entry_Id'),now())]
 
 }

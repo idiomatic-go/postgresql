@@ -19,7 +19,7 @@ type CommandTag struct {
 
 var execLoc = pkgPath + "/exec"
 
-func ExecInsert[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, values []any) (CommandTag, *template.Status) {
+func ExecInsert[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, values [][]any) (CommandTag, *template.Status) {
 	var e E
 
 	if IsContextExec(ctx) {

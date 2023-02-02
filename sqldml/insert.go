@@ -18,14 +18,30 @@ const (
 	ChangedTimestampFn = "now()"
 )
 
-func WriteInsert(sql string, values []any) (string, error) {
+func Values(v []any) [][]any {
+	if len(v) == 0 {
+		return nil
+	}
+	var values [][]any
+	return append(values, v)
+}
+
+func WriteInsert(sql string, values [][]any) (string, error) {
 	sb := strings.Builder{}
 
 	sb.WriteString(sql)
 	sb.WriteString("\n")
-	err := WriteInsertValues(&sb, values)
+	for i, val := range values {
+		if i > 0 {
+			sb.WriteString(",\n")
+		}
+		err := WriteInsertValues(&sb, val)
+		if err != nil {
+			return sb.String(), err
+		}
+	}
 	sb.WriteString(";\n")
-	return sb.String(), err
+	return sb.String(), nil
 }
 
 func WriteInsertValues(sb *strings.Builder, values []any) error {
