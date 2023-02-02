@@ -5,7 +5,7 @@ import (
 )
 
 type Scanner[T any] interface {
-	Scan(fields []FieldDescription, values []any) T
+	Scan(fields []FieldDescription, values []any) (T, error)
 }
 
 func Scan[T Scanner[T]](rows Rows) ([]T, error) {
@@ -26,7 +26,11 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 		if err != nil {
 			return t, err
 		}
-		t = append(t, s.Scan(rows.FieldDescriptions(), values))
+		val, err1 := s.Scan(rows.FieldDescriptions(), values)
+		if err1 != nil {
+			return t, err1
+		}
+		t = append(t, val)
 	}
 	return t, nil
 }
