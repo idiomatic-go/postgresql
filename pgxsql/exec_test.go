@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/idiomatic-go/middleware/template"
-	"github.com/idiomatic-go/postgresql/sqldml"
+	"github.com/idiomatic-go/postgresql/pgxdml"
 	"time"
 )
 
@@ -73,11 +73,11 @@ func ExampleExec_Insert() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		//values := []any{sqldml.Function(sqldml.ChangedTimestampFn), cond.Location, cond.Temperature}
-		//stmt, err := sqldml.WriteInsert(req.Sql, values)
+		//values := []any{pgxdml.Function(pgxdml.ChangedTimestampFn), cond.Location, cond.Temperature}
+		//stmt, err := pgxdml.WriteInsert(req.Sql, values)
 		//fmt.Printf("test: WriteInsert() -> [error:%v] [sql:%v}\n", err, stmt)
 
-		results, status := ExecInsert[template.DebugError](nil, nil, req, sqldml.Values([]any{sqldml.Function(sqldml.ChangedTimestampFn), cond.Location, cond.Temperature}))
+		results, status := ExecInsert[template.DebugError](nil, nil, req, pgxdml.Values([]any{pgxdml.Function(pgxdml.ChangedTimestampFn), cond.Location, cond.Temperature}))
 		if !status.OK() {
 			fmt.Printf("test: ExecInsert[template.DebugError](nil,%v) -> [status:%v] [tag:%v}\n", execInsertConditions, status, results)
 		} else {
@@ -98,10 +98,10 @@ func ExampleExec_Update() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		attrs := []sqldml.Attr{{"Temperature", 45.1234}}
-		where := []sqldml.Attr{{"Location", "garage"}}
+		attrs := []pgxdml.Attr{{"Temperature", 45.1234}}
+		where := []pgxdml.Attr{{"Location", "garage"}}
 
-		//stmt, err := sqldml.WriteUpdate(req.Sql, attrs, where)
+		//stmt, err := pgxdml.WriteUpdate(req.Sql, attrs, where)
 		//fmt.Printf("test: WriteUpdate() -> [error:%v] [sql:%v]\n", err, stmt)
 
 		results, status := ExecUpdate[template.DebugError](nil, nil, req, attrs, where)
@@ -125,8 +125,8 @@ func ExampleExec_Delete() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		where := []sqldml.Attr{{"Location", "frisco"}}
-		//stmt, err := sqldml.WriteDelete(req.Sql, where)
+		where := []pgxdml.Attr{{"Location", "frisco"}}
+		//stmt, err := pgxdml.WriteDelete(req.Sql, where)
 		//fmt.Printf("test: WriteDelete() -> [error:%v] [sql:%v]\n", err, stmt)
 
 		results, status := ExecDelete[template.DebugError](nil, nil, req, where)

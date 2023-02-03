@@ -1,4 +1,4 @@
-package sqldml
+package pgxdml
 
 import (
 	"fmt"

@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	execContextKey  = &contextKey{"sqldml-exec"}
+	execContextKey  = &contextKey{"pgxsql-exec"}
 	emptyCommandTag = CommandTag{}
 )
 

@@ -1,4 +1,4 @@
-package sqldml
+package pgxdml
 
 const (
 	valueFmt  = "%v"

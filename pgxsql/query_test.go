@@ -40,7 +40,7 @@ const (
 func queryTestProxy(req Request) (Rows, error) {
 	switch req.Uri {
 	case BuildQueryUri(queryErrorRsc):
-		return nil, errors.New("sqldml query error")
+		return nil, errors.New("pgxsql query error")
 	case BuildQueryUri(queryRowsRsc):
 		var i Rows = &rowsT{}
 		return i, nil
@@ -55,7 +55,7 @@ func ExampleQuery_TestError() {
 	fmt.Printf("test: Query[template.DebugError](ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
-	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [sqldml query error]]
+	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [pgxsql query error]]
 	//test: Query[template.DebugError](ctx,select * from test) -> [rows:<nil>] [status:Internal]
 
 }

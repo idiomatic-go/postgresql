@@ -32,7 +32,7 @@ func Query[E template.ErrorHandler](ctx context.Context, req Request, args ...an
 	if err != nil {
 		return nil, e.HandleWithContext(ctx, queryLoc, recast(err))
 	}
-	return &rows{pgxRows: pgxRows, fd: fieldDescriptions(pgxRows.FieldDescriptions())}, template.NewStatusOK()
+	return &proxyRows{pgxRows: pgxRows, fd: fieldDescriptions(pgxRows.FieldDescriptions())}, template.NewStatusOK()
 }
 
 func fieldDescriptions(fields []pgconn.FieldDescription) []FieldDescription {

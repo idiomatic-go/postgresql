@@ -16,7 +16,7 @@ const (
 func queryctxProxy(req Request) (Rows, error) {
 	switch req.Uri {
 	case BuildQueryUri(queryTestErrorRsc):
-		return nil, errors.New("sqldml query error")
+		return nil, errors.New("pgxsql query error")
 	case BuildQueryUri(queryTestRowsRsc):
 		var i Rows = &rowsT{}
 		return i, nil
@@ -30,7 +30,7 @@ func ExampleContextQuery_Error() {
 	fmt.Printf("test: ContextQuery() : [rows:%v] [error:%v]\n", rows != nil, err)
 
 	//Output:
-	//test: ContextQuery() : [rows:false] [error:sqldml query error]
+	//test: ContextQuery() : [rows:false] [error:pgxsql query error]
 
 }
 

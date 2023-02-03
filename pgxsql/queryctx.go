@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	queryContextKey = &contextKey{"sqldml-query"}
+	queryContextKey = &contextKey{"pgxsql-query"}
 )
 
 type contextKey struct {

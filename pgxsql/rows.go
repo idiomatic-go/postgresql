@@ -31,7 +31,7 @@ type Rows interface {
 	Next() bool
 
 	// Scan reads the values from the current row into dest values positionally.
-	// dest can include pointers to core sqldml, values implementing the Scanner
+	// dest can include pointers to core pgxsql, values implementing the Scanner
 	// interface, and nil. nil will skip the value entirely. It is an error to
 	// call Scan without first calling Next() and checking that it returned true.
 	Scan(dest ...any) error
@@ -55,25 +55,25 @@ var (
 	queryLoc = pkgPath + "/query"
 )
 
-type rows struct {
+type proxyRows struct {
 	pgxRows pgx.Rows
 	fd      []FieldDescription
 }
 
-func (r *rows) Close() {
+func (r *proxyRows) Close() {
 	if r != nil {
 		r.pgxRows.Close()
 	}
 }
 
-func (r *rows) Err() error {
+func (r *proxyRows) Err() error {
 	if r == nil {
 		return nil
 	}
 	return r.pgxRows.Err()
 }
 
-func (r *rows) CommandTag() CommandTag {
+func (r *proxyRows) CommandTag() CommandTag {
 	if r == nil {
 		return CommandTag{}
 	}
@@ -81,35 +81,35 @@ func (r *rows) CommandTag() CommandTag {
 	return CommandTag{RowsAffected: t.RowsAffected(), Sql: t.String()}
 }
 
-func (r *rows) FieldDescriptions() []FieldDescription {
+func (r *proxyRows) FieldDescriptions() []FieldDescription {
 	if r == nil {
 		return nil
 	}
 	return r.fd
 }
 
-func (r *rows) Next() bool {
+func (r *proxyRows) Next() bool {
 	if r == nil {
 		return false
 	}
 	return r.pgxRows.Next()
 }
 
-func (r *rows) Scan(dest ...any) error {
+func (r *proxyRows) Scan(dest ...any) error {
 	if r == nil {
 		return nil
 	}
 	return r.pgxRows.Scan(dest)
 }
 
-func (r *rows) Values() ([]any, error) {
+func (r *proxyRows) Values() ([]any, error) {
 	if r == nil {
 		return nil, nil
 	}
 	return r.pgxRows.Values()
 }
 
-func (r *rows) RawValues() [][]byte {
+func (r *proxyRows) RawValues() [][]byte {
 	if r == nil {
 		return nil
 	}

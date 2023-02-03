@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/idiomatic-go/middleware/template"
-	"github.com/idiomatic-go/postgresql/sqldml"
+	"github.com/idiomatic-go/postgresql/pgxdml"
 )
 
 type CommandTag struct {
@@ -26,35 +26,35 @@ func ExecInsert[E template.ErrorHandler](ctx context.Context, tag *CommandTag, r
 		newTag, err := ContextExec(ctx, req)
 		return newTag, e.HandleWithContext(ctx, execLoc, err)
 	}
-	stmt, err := sqldml.WriteInsert(req.Sql, values)
+	stmt, err := pgxdml.WriteInsert(req.Sql, values)
 	if err != nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
 	}
 	return ExecWithCommand[E](ctx, tag, Request{Uri: req.Uri, Sql: stmt})
 }
 
-func ExecUpdate[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, attrs []sqldml.Attr, where []sqldml.Attr) (CommandTag, *template.Status) {
+func ExecUpdate[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, attrs []pgxdml.Attr, where []pgxdml.Attr) (CommandTag, *template.Status) {
 	var e E
 
 	if IsContextExec(ctx) {
 		newTag, err := ContextExec(ctx, req)
 		return newTag, e.HandleWithContext(ctx, execLoc, err)
 	}
-	stmt, err := sqldml.WriteUpdate(req.Sql, attrs, where)
+	stmt, err := pgxdml.WriteUpdate(req.Sql, attrs, where)
 	if err != nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
 	}
 	return ExecWithCommand[E](ctx, tag, Request{Uri: req.Uri, Sql: stmt})
 }
 
-func ExecDelete[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, where []sqldml.Attr) (CommandTag, *template.Status) {
+func ExecDelete[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, where []pgxdml.Attr) (CommandTag, *template.Status) {
 	var e E
 
 	if IsContextExec(ctx) {
 		newTag, err := ContextExec(ctx, req)
 		return newTag, e.HandleWithContext(ctx, execLoc, err)
 	}
-	stmt, err := sqldml.WriteDelete(req.Sql, where)
+	stmt, err := pgxdml.WriteDelete(req.Sql, where)
 	if err != nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
 	}
