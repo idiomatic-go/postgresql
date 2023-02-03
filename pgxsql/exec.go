@@ -19,7 +19,7 @@ type CommandTag struct {
 
 var execLoc = pkgPath + "/exec"
 
-func ExecInsert[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, values [][]any) (CommandTag, *template.Status) {
+func Insert[E template.ErrorHandler](ctx context.Context, audit *CommandTag, req Request, values [][]any) (CommandTag, *template.Status) {
 	var e E
 
 	if IsContextExec(ctx) {
@@ -30,10 +30,10 @@ func ExecInsert[E template.ErrorHandler](ctx context.Context, tag *CommandTag, r
 	if err != nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
 	}
-	return ExecWithCommand[E](ctx, tag, Request{Uri: req.Uri, Sql: stmt})
+	return Exec[E](ctx, audit, Request{Uri: req.Uri, Sql: stmt})
 }
 
-func ExecUpdate[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, attrs []pgxdml.Attr, where []pgxdml.Attr) (CommandTag, *template.Status) {
+func Update[E template.ErrorHandler](ctx context.Context, audit *CommandTag, req Request, attrs []pgxdml.Attr, where []pgxdml.Attr) (CommandTag, *template.Status) {
 	var e E
 
 	if IsContextExec(ctx) {
@@ -44,10 +44,10 @@ func ExecUpdate[E template.ErrorHandler](ctx context.Context, tag *CommandTag, r
 	if err != nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
 	}
-	return ExecWithCommand[E](ctx, tag, Request{Uri: req.Uri, Sql: stmt})
+	return Exec[E](ctx, audit, Request{Uri: req.Uri, Sql: stmt})
 }
 
-func ExecDelete[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, where []pgxdml.Attr) (CommandTag, *template.Status) {
+func Delete[E template.ErrorHandler](ctx context.Context, audit *CommandTag, req Request, where []pgxdml.Attr) (CommandTag, *template.Status) {
 	var e E
 
 	if IsContextExec(ctx) {
@@ -58,14 +58,10 @@ func ExecDelete[E template.ErrorHandler](ctx context.Context, tag *CommandTag, r
 	if err != nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
 	}
-	return ExecWithCommand[E](ctx, tag, Request{Uri: req.Uri, Sql: stmt})
+	return Exec[E](ctx, audit, Request{Uri: req.Uri, Sql: stmt})
 }
 
-func Exec[E template.ErrorHandler](ctx context.Context, req Request, arguments ...any) (CommandTag, *template.Status) {
-	return ExecWithCommand[E](ctx, nil, req, arguments)
-}
-
-func ExecWithCommand[E template.ErrorHandler](ctx context.Context, tag *CommandTag, req Request, args ...any) (_ CommandTag, status *template.Status) {
+func Exec[E template.ErrorHandler](ctx context.Context, audit *CommandTag, req Request, args ...any) (_ CommandTag, status *template.Status) {
 	var e E
 	var limited = false
 	var fn template.ActuatorComplete
@@ -95,9 +91,9 @@ func ExecWithCommand[E template.ErrorHandler](ctx context.Context, tag *CommandT
 		err0 = txn.Rollback(ctx)
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, recast(err), err0)
 	}
-	if tag != nil && t.RowsAffected() != tag.RowsAffected {
+	if audit != nil && t.RowsAffected() != audit.RowsAffected {
 		err0 = txn.Rollback(ctx)
-		return CommandTag{}, e.HandleWithContext(ctx, execLoc, errors.New(fmt.Sprintf("error exec statement [%v] : actual RowsAffected %v != expected RowsAffected %v", t.String(), t.RowsAffected(), tag.RowsAffected)), err0)
+		return CommandTag{}, e.HandleWithContext(ctx, execLoc, errors.New(fmt.Sprintf("error exec statement [%v] : actual RowsAffected %v != expected RowsAffected %v", t.String(), t.RowsAffected(), audit.RowsAffected)), err0)
 	}
 	err = txn.Commit(ctx)
 	if err != nil {
