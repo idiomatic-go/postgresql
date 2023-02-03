@@ -1,5 +1,7 @@
 package pgxsql
 
+import "errors"
+
 const (
 	UrnNID   = "urn:postgres"
 	QueryNSS = UrnNID + ":" + "query."
@@ -11,6 +13,16 @@ const (
 type Request struct {
 	Uri string
 	Sql string
+}
+
+func (r Request) Validate() error {
+	if r.Uri == "" {
+		return errors.New("invalid argument: request Uri is empty")
+	}
+	if r.Sql == "" {
+		return errors.New("invalid argument: request SQL is empty")
+	}
+	return nil
 }
 
 func (r Request) String() string {
