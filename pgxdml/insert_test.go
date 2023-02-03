@@ -17,8 +17,17 @@ func NilEmpty(s string) string {
 	return s
 }
 
+func ExampleNewInsertValues() {
+	values := NewInsertValues([]any{100, "customer 1", false, Function(nextValFn), Function(ChangedTimestampFn)})
+
+	fmt.Printf("test: NewInsertValues() -> %v\n", values)
+
+	//Output:
+	//test: NewInsertValues() -> [[100 customer 1 false nextval('test_entry_Id') now()]]
+}
+
 func ExampleWriteInsert() {
-	var values [][]any
+	var values InsertValues
 	values = append(values, []any{100, "customer 1", false, Function(nextValFn), Function(ChangedTimestampFn)})
 	values = append(values, []any{200, "customer 2", true, Function(nextValFn), Function(ChangedTimestampFn)})
 

@@ -18,15 +18,17 @@ const (
 	ChangedTimestampFn = "now()"
 )
 
-func Values(v []any) [][]any {
+type InsertValues [][]any
+
+func NewInsertValues(v []any) InsertValues {
 	if len(v) == 0 {
 		return nil
 	}
-	var values [][]any
+	var values InsertValues
 	return append(values, v)
 }
 
-func WriteInsert(sql string, values [][]any) (string, error) {
+func WriteInsert(sql string, values InsertValues) (string, error) {
 	sb := strings.Builder{}
 
 	sb.WriteString(sql)
