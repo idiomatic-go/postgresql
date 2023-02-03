@@ -7,9 +7,10 @@ import (
 	"time"
 )
 
+// "postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
+
 const (
-	serviceUrlFmt = "postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
-	serviceUrl    = ""
+	serviceUrl = ""
 )
 
 func Example_Startup() {

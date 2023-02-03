@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/idiomatic-go/middleware/template"
+	"github.com/idiomatic-go/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5/pgtype"
 	"time"
 )
@@ -30,11 +31,14 @@ func (r *rowsT) Values() ([]any, error)                { return nil, nil }
 func (r *rowsT) RawValues() [][]byte                   { return nil }
 
 const (
-	queryErrorSql   = "select * from test"
-	queryRowsSql    = "select * from table"
-	queryConditions = "select * from conditions"
-	queryErrorRsc   = "error"
-	queryRowsRsc    = "rows"
+	queryErrorSql = "select * from test"
+	queryRowsSql  = "select * from table"
+
+	queryConditions      = "select * from conditions"
+	queryConditionsWhere = "select * from conditions where $1 order by temperature desc"
+	queryConditionsError = "select test,test2 from conditions"
+	queryErrorRsc        = "error"
+	queryRowsRsc         = "rows"
 )
 
 func queryTestProxy(req *Request) (Rows, error) {
@@ -69,14 +73,36 @@ func ExampleQuery_TestRows() {
 
 }
 
-func ExampleQuery_Conditions() {
-	req := NewQueryRequest(queryRowsRsc, queryConditions, nil)
-
+func ExampleQuery_Conditions_Error() {
 	err := testStartup()
 	if err != nil {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
+		req := NewQueryRequest(queryRowsRsc, queryConditionsError, nil)
+		results, status := Query[template.DebugError](nil, req)
+		if !status.OK() {
+			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v]\n", queryConditionsError, status)
+		} else {
+			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
+			conditions, status1 := processResults(results, "")
+			fmt.Printf("test: processResults(results) -> [status:%v] [rows:%v]\n", status1, conditions)
+		}
+	}
+
+	//Output:
+	//[[] github.com/idiomatic-go/postgresql/pgxsql/query [serverity:ERROR, code:42703, message:column "test" does not exist, position:8, SQLState:42703]]
+	//test: Query[template.DebugError](nil,select test,test2 from conditions) -> [status:Internal]
+
+}
+
+func ExampleQuery_Conditions() {
+	err := testStartup()
+	if err != nil {
+		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
+	} else {
+		defer ClientShutdown()
+		req := NewQueryRequest(queryRowsRsc, queryConditions, nil)
 		results, status := Query[template.DebugError](nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v]\n", queryConditions, status)
@@ -89,7 +115,32 @@ func ExampleQuery_Conditions() {
 
 	//Output:
 	//test: Query[template.DebugError](nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
-	//test: processResults(results) -> [status:OK] [rows:[{2023-01-26 12:09:12.426535 -0600 CST office 70} {2023-01-26 12:09:12.426535 -0600 CST basement 66.5} {2023-01-26 12:09:12.426535 -0600 CST garage 77}]]
+	//test: processResults(results) -> [status:OK] [rows:[{2023-01-26 12:09:12.426535 -0600 CST office 70} {2023-01-26 12:09:12.426535 -0600 CST basement 66.5} {2023-01-26 12:09:12.426535 -0600 CST garage 45.1234}]]
+
+}
+
+func ExampleQuery_Conditions_Where() {
+	err := testStartup()
+	if err != nil {
+		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
+	} else {
+		defer ClientShutdown()
+
+		where := []pgxdml.Attr{{"location", "garage"}}
+		req := NewQueryRequest(queryRowsRsc, queryConditionsWhere, where)
+		results, status := Query[template.DebugError](nil, req)
+		if !status.OK() {
+			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v]\n", queryConditionsWhere, status)
+		} else {
+			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
+			conditions, status1 := processResults(results, "")
+			fmt.Printf("test: processResults(results) -> [status:%v] [rows:%v]\n", status1, conditions)
+		}
+	}
+
+	//Output:
+	//test: Query[template.DebugError](nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
+	//test: processResults(results) -> [status:OK] [rows:[{2023-01-26 12:09:12.426535 -0600 CST garage 45.1234}]]
 
 }
 
