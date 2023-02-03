@@ -18,7 +18,7 @@ func NilEmpty(s string) string {
 }
 
 func ExampleNewInsertValues() {
-	values := NewInsertValues([]any{100, "customer 1", false, NextValFn("test_entry_Id"), TimestampFn()})
+	values := NewInsertValues([]any{100, "customer 1", false, NextValFn("test_entry_Id"), TimestampFn})
 
 	fmt.Printf("test: NewInsertValues() -> %v\n", values)
 
@@ -28,8 +28,8 @@ func ExampleNewInsertValues() {
 
 func ExampleWriteInsert() {
 	var values InsertValues
-	values = append(values, []any{100, "customer 1", false, NextValFn("test_entry_Id"), TimestampFn()})
-	values = append(values, []any{200, "customer 2", true, NextValFn("test_entry_Id"), TimestampFn()})
+	values = append(values, []any{100, "customer 1", false, NextValFn("test_entry_Id"), TimestampFn})
+	values = append(values, []any{200, "customer 2", true, NextValFn("test_entry_Id"), TimestampFn})
 
 	stmt, err := WriteInsert(insertEntryStmt, values)
 	fmt.Printf("test: WriteInsert() -> [error:%v] [stmt:%v\n", err, stmt)
@@ -51,7 +51,7 @@ func ExampleWriteInsertValues() {
 	err = WriteInsertValues(&sb1, []any{100})
 	fmt.Printf("test: WriteInsertValues() -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb1.String()))
 
-	err = WriteInsertValues(&sb, []any{100, "test string", false, NextValFn("test_entry_Id"), TimestampFn()})
+	err = WriteInsertValues(&sb, []any{100, "test string", false, NextValFn("test_entry_Id"), TimestampFn})
 	fmt.Printf("test: WriteInsertValues() -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	//Output:

@@ -3,7 +3,8 @@ package pgxdml
 import "fmt"
 
 const (
-	timestampFn  = "now()"
+	TimestampFn = Function("now()")
+
 	nextValFnFmt = "nextval('%s')"
 	valueFmt     = "%v"
 	stringFmt    = "'%v'"
@@ -18,9 +19,9 @@ func NextValFn(sequence string) Function {
 	return Function(fmt.Sprintf(nextValFnFmt, sequence))
 }
 
-func TimestampFn() Function {
-	return Function(timestampFn)
-}
+//func TimestampFn() Function {
+//	return Function(timestampFn)
+//}
 
 type Function string
 
