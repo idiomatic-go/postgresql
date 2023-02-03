@@ -2,6 +2,7 @@ package pgxdml
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -15,8 +16,13 @@ INSERT INTO table_name (column_list) VALUES
 */
 
 const (
-	ChangedTimestampFn = "now()"
+	TimestampFn  = "now()"
+	nextValFnFmt = "nextval('%s')"
 )
+
+func NextValFn(sequence string) string {
+	return fmt.Sprintf(nextValFnFmt, sequence)
+}
 
 type InsertValues [][]any
 
