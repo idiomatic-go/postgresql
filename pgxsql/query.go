@@ -30,7 +30,7 @@ func Query[E template.ErrorHandler](ctx context.Context, req Request, args ...an
 	}
 	pgxRows, err := dbClient.Query(ctx, req.Sql, args...)
 	if err != nil {
-		return nil, e.HandleWithContext(ctx, queryLoc, err)
+		return nil, e.HandleWithContext(ctx, queryLoc, recast(err))
 	}
 	return &rows{pgxRows: pgxRows, fd: fieldDescriptions(pgxRows.FieldDescriptions())}, template.NewStatusOK()
 }
