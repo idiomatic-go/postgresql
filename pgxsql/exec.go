@@ -22,52 +22,6 @@ const (
 
 var execLoc = pkgPath + "/exec"
 
-/*
-func Insert[E template.ErrorHandler](ctx context.Context, expectedCount int64, req Request, values [][]any) (CommandTag, *template.Status) {
-	var e E
-
-	if IsContextExec(ctx) {
-		newTag, err := ContextExec(ctx, req)
-		return newTag, e.HandleWithContext(ctx, execLoc, err)
-	}
-	stmt, err := pgxdml.WriteInsert(req.Sql, values)
-	if err != nil {
-		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
-	}
-	return Exec[E](ctx, expectedCount, Request{Uri: req.Uri, Sql: stmt})
-}
-
-func Update[E template.ErrorHandler](ctx context.Context, expectedCount int64, req Request, attrs []pgxdml.Attr, where []pgxdml.Attr) (CommandTag, *template.Status) {
-	var e E
-
-	if IsContextExec(ctx) {
-		newTag, err := ContextExec(ctx, req)
-		return newTag, e.HandleWithContext(ctx, execLoc, err)
-	}
-	stmt, err := pgxdml.WriteUpdate(req.Sql, attrs, where)
-	if err != nil {
-		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
-	}
-	return Exec[E](ctx, expectedCount, Request{Uri: req.Uri, Sql: stmt})
-}
-
-func Delete[E template.ErrorHandler](ctx context.Context, expectedCount int64, req Request, where []pgxdml.Attr) (CommandTag, *template.Status) {
-	var e E
-
-	if IsContextExec(ctx) {
-		newTag, err := ContextExec(ctx, req)
-		return newTag, e.HandleWithContext(ctx, execLoc, err)
-	}
-	stmt, err := pgxdml.WriteDelete(req.Sql, where)
-	if err != nil {
-		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
-	}
-	return Exec[E](ctx, expectedCount, Request{Uri: req.Uri, Sql: stmt})
-}
-
-
-*/
-
 func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (_ CommandTag, status *template.Status) {
 	var e E
 	var limited = false
