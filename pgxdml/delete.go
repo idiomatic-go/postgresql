@@ -7,6 +7,6 @@ func WriteDelete(sql string, where []Attr) (string, error) {
 
 	sb.WriteString(sql)
 	sb.WriteString("\n")
-	err := WriteWhere(&sb, where)
+	err := WriteWhere(&sb, true, where)
 	return sb.String(), err
 }

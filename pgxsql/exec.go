@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/idiomatic-go/middleware/template"
-	"github.com/idiomatic-go/postgresql/pgxdml"
 )
 
 type CommandTag struct {
@@ -23,6 +22,7 @@ const (
 
 var execLoc = pkgPath + "/exec"
 
+/*
 func Insert[E template.ErrorHandler](ctx context.Context, expectedCount int64, req Request, values [][]any) (CommandTag, *template.Status) {
 	var e E
 
@@ -65,13 +65,19 @@ func Delete[E template.ErrorHandler](ctx context.Context, expectedCount int64, r
 	return Exec[E](ctx, expectedCount, Request{Uri: req.Uri, Sql: stmt})
 }
 
-func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req Request, args ...any) (_ CommandTag, status *template.Status) {
+
+*/
+
+func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (_ CommandTag, status *template.Status) {
 	var e E
 	var limited = false
 	var fn template.ActuatorComplete
 
 	if ctx == nil {
 		ctx = context.Background()
+	}
+	if req == nil {
+		return CommandTag{}, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetCode(template.StatusInvalidArgument)
 	}
 	fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, template.ContextRequestId(ctx), "GET")
 	defer fn()
@@ -90,7 +96,7 @@ func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req
 	if err0 != nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err0)
 	}
-	t, err := dbClient.Exec(ctx, req.Sql, args...)
+	t, err := dbClient.Exec(ctx, req.BuildSql(), args...)
 	if err != nil {
 		err0 = txn.Rollback(ctx)
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, recast(err), err0)

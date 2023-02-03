@@ -37,7 +37,7 @@ const (
 	queryRowsRsc    = "rows"
 )
 
-func queryTestProxy(req Request) (Rows, error) {
+func queryTestProxy(req *Request) (Rows, error) {
 	switch req.Uri {
 	case BuildQueryUri(queryErrorRsc):
 		return nil, errors.New("pgxsql query error")
@@ -51,7 +51,7 @@ func queryTestProxy(req Request) (Rows, error) {
 var qCtx = ContextWithQuery(context.Background(), queryTestProxy)
 
 func ExampleQuery_TestError() {
-	result, status := Query[template.DebugError](qCtx, NewQueryRequest(queryErrorRsc, queryErrorSql))
+	result, status := Query[template.DebugError](qCtx, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
 	fmt.Printf("test: Query[template.DebugError](ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
@@ -61,7 +61,7 @@ func ExampleQuery_TestError() {
 }
 
 func ExampleQuery_TestRows() {
-	result, status := Query[template.DebugError](qCtx, NewQueryRequest(queryRowsRsc, queryRowsSql))
+	result, status := Query[template.DebugError](qCtx, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
 	fmt.Printf("test: Query[template.DebugError](ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, result.CommandTag())
 
 	//Output:
@@ -70,7 +70,7 @@ func ExampleQuery_TestRows() {
 }
 
 func ExampleQuery_Conditions() {
-	req := NewQueryRequest(queryRowsRsc, queryConditions)
+	req := NewQueryRequest(queryRowsRsc, queryConditions, nil)
 
 	err := testStartup()
 	if err != nil {

@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/idiomatic-go/middleware/template"
-	"github.com/idiomatic-go/postgresql/pgxdml"
-	"time"
 )
 
 func NilEmpty(s string) string {
@@ -21,20 +19,20 @@ const (
 	execInsertSql = "insert test"
 	execUpdateRsc = "update"
 	execInsertRsc = "insert"
-	execDeleteRsc = "insert"
+	execDeleteRsc = "delete"
 
 	execInsertConditions = "INSERT INTO conditions (time,location,temperature) VALUES"
 	execUpdateConditions = "UPDATE conditions"
 	execDeleteConditions = "DELETE FROM conditions"
 )
 
-func execTestProxy(req Request) (CommandTag, error) {
+func execTestProxy(req *Request) (CommandTag, error) {
 	switch req.Uri {
-	case BuildExecUri(execUpdateRsc):
+	case BuildUpdateUri(execUpdateRsc):
 		return emptyCommandTag, errors.New("exec error")
-	case BuildExecUri(execInsertRsc):
+	case BuildInsertUri(execInsertRsc):
 		return CommandTag{
-			Sql:          req.Sql,
+			Sql:          "INSERT 1",
 			RowsAffected: 1234,
 			Insert:       true,
 			Update:       false,
@@ -45,24 +43,25 @@ func execTestProxy(req Request) (CommandTag, error) {
 	return emptyCommandTag, nil
 }
 
-func ExampleExec() {
+func ExampleExecProxy() {
 	ctx := ContextWithExec(context.Background(), execTestProxy)
 
-	cmd, status := Exec[template.DebugError](ctx, NullCount, NewExecRequest(execUpdateRsc, execUpdateSql))
+	cmd, status := Exec[template.DebugError](ctx, NullCount, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execUpdateSql, status, cmd)
 
-	cmd, status = Exec[template.DebugError](ctx, NullCount, NewExecRequest(execInsertRsc, execInsertSql))
+	cmd, status = Exec[template.DebugError](ctx, NullCount, NewInsertRequest(execInsertRsc, execInsertSql, nil))
 	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
 
 	//Output:
 	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [exec error]]
 	//test: Exec(update test) -> Internal [cmd:{ 0 false false false false}]
-	//test: Exec(insert test) -> OK [cmd:{insert test 1234 true false false false}]
-
+	//test: Exec(insert test) -> OK [cmd:{INSERT 1 1234 true false false false}]
+	
 }
 
+/*
 func ExampleExec_Insert() {
-	req := NewExecRequest(execInsertRsc, execInsertConditions)
+	req := NewInsertRequest(execInsertRsc, execInsertConditions,nil)
 	cond := TestConditions{
 		Time:        time.Now(),
 		Location:    "frisco",
@@ -141,3 +140,6 @@ func ExampleExec_Delete() {
 	//test: ExecDelete[template.DebugError](nil,DELETE FROM conditions) -> [status:OK] [cmd:{DELETE 1 1 false false true false}]
 
 }
+
+
+*/

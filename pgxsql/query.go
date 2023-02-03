@@ -7,13 +7,16 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func Query[E template.ErrorHandler](ctx context.Context, req Request, args ...any) (result Rows, status *template.Status) {
+func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *template.Status) {
 	var e E
 	var limited = false
 	var fn template.ActuatorComplete
 
 	if ctx == nil {
 		ctx = context.Background()
+	}
+	if req == nil {
+		return nil, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetCode(template.StatusInvalidArgument)
 	}
 	fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, template.ContextRequestId(ctx), "GET")
 	defer fn()
@@ -28,7 +31,7 @@ func Query[E template.ErrorHandler](ctx context.Context, req Request, args ...an
 	if dbClient == nil {
 		return nil, e.HandleWithContext(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(template.StatusInvalidArgument)
 	}
-	pgxRows, err := dbClient.Query(ctx, req.Sql, args...)
+	pgxRows, err := dbClient.Query(ctx, req.BuildSql(), args...)
 	if err != nil {
 		return nil, e.HandleWithContext(ctx, queryLoc, recast(err))
 	}

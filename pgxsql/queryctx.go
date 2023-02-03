@@ -17,7 +17,7 @@ type contextKey struct {
 
 func (k *contextKey) String() string { return "context value " + k.name }
 
-type QueryProxy func(req Request) (Rows, error)
+type QueryProxy func(req *Request) (Rows, error)
 
 // ContextWithQuery - creates a new Context with a Query function
 func ContextWithQuery(ctx context.Context, fn QueryProxy) context.Context {
@@ -27,7 +27,7 @@ func ContextWithQuery(ctx context.Context, fn QueryProxy) context.Context {
 	return &queryCtx{ctx, queryContextKey, fn}
 }
 
-func ContextQuery(ctx context.Context, req Request) (Rows, error) {
+func ContextQuery(ctx context.Context, req *Request) (Rows, error) {
 	if ctx == nil {
 		return nil, errors.New("context is nil")
 	}

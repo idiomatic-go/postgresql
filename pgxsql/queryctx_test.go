@@ -13,7 +13,7 @@ const (
 	queryTestRowsRsc  = "rows"
 )
 
-func queryctxProxy(req Request) (Rows, error) {
+func queryctxProxy(req *Request) (Rows, error) {
 	switch req.Uri {
 	case BuildQueryUri(queryTestErrorRsc):
 		return nil, errors.New("pgxsql query error")
@@ -26,7 +26,7 @@ func queryctxProxy(req Request) (Rows, error) {
 
 func ExampleContextQuery_Error() {
 	ctx := ContextWithQuery(context.Background(), queryctxProxy)
-	rows, err := ContextQuery(ctx, NewQueryRequest(queryTestErrorRsc, queryTestErrorSql))
+	rows, err := ContextQuery(ctx, NewQueryRequest(queryTestErrorRsc, queryTestErrorSql, nil))
 	fmt.Printf("test: ContextQuery() : [rows:%v] [error:%v]\n", rows != nil, err)
 
 	//Output:
@@ -36,7 +36,7 @@ func ExampleContextQuery_Error() {
 
 func ExampleContextQuery_Rows() {
 	ctx := ContextWithQuery(context.Background(), queryctxProxy)
-	rows, err := ContextQuery(ctx, NewQueryRequest(queryTestRowsRsc, queryTestRowsSql))
+	rows, err := ContextQuery(ctx, NewQueryRequest(queryTestRowsRsc, queryTestRowsSql, nil))
 	fmt.Printf("test: ContextQuery() : [rows:%v] [error:%v]\n", rows != nil, err)
 
 	//Output:

@@ -13,13 +13,13 @@ const (
 	execTestInsertRsc = "insert"
 )
 
-func execCtxProxy(req Request) (CommandTag, error) {
+func execCtxProxy(req *Request) (CommandTag, error) {
 	switch req.Uri {
-	case BuildExecUri(execTestUpdateRsc):
+	case BuildUpdateUri(execTestUpdateRsc):
 		return emptyCommandTag, errors.New("exec error")
-	case BuildExecUri(execTestInsertRsc):
+	case BuildInsertUri(execTestInsertRsc):
 		return CommandTag{
-			Sql:          req.Sql,
+			Sql:          "INSERT 1",
 			RowsAffected: 1234,
 			Insert:       true,
 			Update:       false,
@@ -32,7 +32,7 @@ func execCtxProxy(req Request) (CommandTag, error) {
 
 func ExampleContextExec_Error() {
 	ctx := ContextWithExec(context.Background(), execCtxProxy)
-	tag, err := ContextExec(ctx, NewExecRequest(execTestUpdateRsc, execTestUpdateSql))
+	tag, err := ContextExec(ctx, NewUpdateRequest(execTestUpdateRsc, execTestUpdateSql, nil, nil))
 	fmt.Printf("test: ExecQuery() : [tags:%v] [error:%v]\n", tag, err)
 
 	//Output:
@@ -42,10 +42,10 @@ func ExampleContextExec_Error() {
 
 func ExampleContextExec_Rows() {
 	ctx := ContextWithExec(context.Background(), execCtxProxy)
-	tag, err := ContextExec(ctx, NewExecRequest(execTestInsertRsc, execTestInsertSql))
+	tag, err := ContextExec(ctx, NewInsertRequest(execTestInsertRsc, execTestInsertSql, nil))
 	fmt.Printf("test: ContextExec() : [tag:%v] [error:%v]\n", tag, err)
 
 	//Output:
-	//test: ContextExec() : [tag:{insert test 1234 true false false false}] [error:<nil>]
+	//test: ContextExec() : [tag:{INSERT 1 1234 true false false false}] [error:<nil>]
 
 }

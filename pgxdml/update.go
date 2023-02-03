@@ -29,7 +29,7 @@ func WriteUpdate(sql string, attrs []Attr, where []Attr) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = WriteWhere(&sb, where)
+	err = WriteWhere(&sb, true, where)
 	return sb.String(), err
 }
 
@@ -50,25 +50,5 @@ func WriteUpdateSet(sb *strings.Builder, attrs []Attr) error {
 		}
 	}
 	sb.WriteString("\n")
-	return nil
-}
-
-func WriteWhere(sb *strings.Builder, attrs []Attr) error {
-	max := len(attrs) - 1
-	if max < 0 {
-		return errors.New("invalid update where argument, attrs slice is empty")
-	}
-	sb.WriteString(Where)
-	for i, attr := range attrs {
-		s, err := FmtAttr(attr)
-		if err != nil {
-			return err
-		}
-		sb.WriteString(s)
-		if i < max {
-			sb.WriteString(And)
-		}
-	}
-	sb.WriteString(";")
 	return nil
 }
