@@ -48,10 +48,10 @@ func execTestProxy(req Request) (CommandTag, error) {
 func ExampleExec() {
 	ctx := ContextWithExec(context.Background(), execTestProxy)
 
-	cmd, status := Exec[template.DebugError](ctx, nil, NewExecRequest(execUpdateRsc, execUpdateSql))
+	cmd, status := Exec[template.DebugError](ctx, NullCount, NewExecRequest(execUpdateRsc, execUpdateSql))
 	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execUpdateSql, status, cmd)
 
-	cmd, status = Exec[template.DebugError](ctx, nil, NewExecRequest(execInsertRsc, execInsertSql))
+	cmd, status = Exec[template.DebugError](ctx, NullCount, NewExecRequest(execInsertRsc, execInsertSql))
 	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
 
 	//Output:
@@ -77,7 +77,7 @@ func ExampleExec_Insert() {
 		//stmt, err := pgxdml.WriteInsert(req.Sql, values)
 		//fmt.Printf("test: WriteInsert() -> [error:%v] [sql:%v}\n", err, stmt)
 
-		results, status := Insert[template.DebugError](nil, nil, req, pgxdml.Values([]any{pgxdml.Function(pgxdml.ChangedTimestampFn), cond.Location, cond.Temperature}))
+		results, status := Insert[template.DebugError](nil, NullCount, req, pgxdml.NewInsertValues([]any{pgxdml.TimestampFn, cond.Location, cond.Temperature}))
 		if !status.OK() {
 			fmt.Printf("test: ExecInsert[template.DebugError](nil,%v) -> [status:%v] [tag:%v}\n", execInsertConditions, status, results)
 		} else {
@@ -104,7 +104,7 @@ func ExampleExec_Update() {
 		//stmt, err := pgxdml.WriteUpdate(req.Sql, attrs, where)
 		//fmt.Printf("test: WriteUpdate() -> [error:%v] [sql:%v]\n", err, stmt)
 
-		results, status := Update[template.DebugError](nil, nil, req, attrs, where)
+		results, status := Update[template.DebugError](nil, NullCount, req, attrs, where)
 		if !status.OK() {
 			fmt.Printf("test: ExecUpdate[template.DebugError](nil,%v) -> [status:%v] [tag:%v}\n", execUpdateConditions, status, results)
 		} else {
@@ -129,7 +129,7 @@ func ExampleExec_Delete() {
 		//stmt, err := pgxdml.WriteDelete(req.Sql, where)
 		//fmt.Printf("test: WriteDelete() -> [error:%v] [sql:%v]\n", err, stmt)
 
-		results, status := Delete[template.DebugError](nil, nil, req, where)
+		results, status := Delete[template.DebugError](nil, NullCount, req, where)
 		if !status.OK() {
 			fmt.Printf("test: ExecDelete[template.DebugError](nil,%v) -> [status:%v] [tag:%v}\n", execDeleteConditions, status, results)
 		} else {
