@@ -73,8 +73,17 @@ func (r *Request) BuildSql() string {
 	case insertCmd:
 		sql, err = pgxdml.WriteInsert(r.Template, r.Values)
 	case updateCmd:
+		if len(r.Where) == 0 {
+			r.Where = append(r.Where, pgxdml.Attr{Name: "update_error_no_where_clause", Val: "null"})
+		}
+		if len(r.Attrs) == 0 {
+			r.Attrs = append(r.Attrs, pgxdml.Attr{Name: "update_error_no_set_clause", Val: "null"})
+		}
 		sql, err = pgxdml.WriteUpdate(r.Template, r.Attrs, r.Where)
 	case deleteCmd:
+		if len(r.Where) == 0 {
+			r.Where = append(r.Where, pgxdml.Attr{Name: "delete_error_no_where_clause", Val: "null"})
+		}
 		sql, err = pgxdml.WriteDelete(r.Template, r.Where)
 	}
 	r.Error = err
