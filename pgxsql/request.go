@@ -56,6 +56,19 @@ func (r *Request) Validate() error {
 	if r.Template == "" {
 		return errors.New("invalid argument: request template is empty")
 	}
+	if r.cmd == deleteCmd {
+		if len(r.Where) == 0 {
+			return errors.New("invalid argument: delete where clause is empty")
+		}
+	}
+	if r.cmd == updateCmd {
+		if len(r.Attrs) == 0 {
+			return errors.New("invalid argument: update set clause is empty")
+		}
+		if len(r.Where) == 0 {
+			return errors.New("invalid argument: update where clause is empty")
+		}
+	}
 	return nil
 }
 
