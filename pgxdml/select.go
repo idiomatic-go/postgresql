@@ -6,23 +6,26 @@ import (
 )
 
 const (
-	firstParameterRef = "$1"
+	whereClause = "{where}"
 )
 
 func ExpandSelect(template string, where []Attr) (string, error) {
 	if template == "" {
 		return template, errors.New("template is empty")
 	}
-	pos := strings.Index(template, firstParameterRef)
+	pos := strings.Index(template, whereClause)
 	if pos == -1 {
 		return template, nil
 	}
-	if len(where) == 0 {
-		return template, errors.New("where attributes are empty")
-	}
 	sb := strings.Builder{}
+	if len(where) == 0 {
+		sb.WriteString(template[:pos])
+		sb.WriteString(template[pos+len(whereClause)+1:])
+		return sb.String(), nil
+	}
 	sb.WriteString(template[:pos])
+	sb.WriteString("\nWHERE ")
 	WriteWhereAttributes(&sb, where)
-	sb.WriteString(template[pos+len(firstParameterRef):])
+	sb.WriteString(template[pos+len(whereClause):])
 	return sb.String(), nil
 }
