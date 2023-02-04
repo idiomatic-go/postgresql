@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"github.com/idiomatic-go/postgresql/pgxdml"
+	"net/url"
 )
 
 const (
@@ -105,6 +106,10 @@ func (r *Request) BuildSql() string {
 
 func NewQueryRequest(resource, template string, where []pgxdml.Attr) *Request {
 	return &Request{cmd: selectCmd, Uri: BuildQueryUri(resource), Template: template, Where: where}
+}
+
+func NewQueryRequestFromUrl(resource, template string, url *url.URL) *Request {
+	return &Request{cmd: selectCmd, Uri: BuildQueryUri(resource), Template: template, Where: pgxdml.BuildWhere(url)}
 }
 
 func NewInsertRequest(resource, template string, values pgxdml.InsertValues) *Request {

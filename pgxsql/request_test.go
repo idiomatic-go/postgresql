@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"fmt"
 	"github.com/idiomatic-go/postgresql/pgxdml"
+	"net/url"
 )
 
 func ExampleBuildRequest() {
@@ -90,5 +91,25 @@ func ExampleBuildSql() {
 	//test: Update.BuildSql(update access_log) -> update access_log
 	//SET update_error_no_set_clause = 'null'
 	//WHERE update_error_no_where_clause = 'null';
+
+}
+
+func ExampleNewQueryRequestFromUrlBuildSql() {
+	u, _ := url.Parse("https://www.google.com/search?location=texas&zone=plano")
+	rsc := "access-log"
+	t := "select * from access_log {where} order by start_time desc limit 2"
+	req := NewQueryRequestFromUrl(rsc, t, u)
+
+	sql := req.BuildSql()
+	fmt.Printf("test: NewQueryRequestFromUrl(%v) -> %v\n", t, sql)
+
+	req = NewQueryRequestFromUrl(rsc, t, nil)
+	sql = req.BuildSql()
+	fmt.Printf("test: NewQueryRequestFromUrl(%v) -> %v\n", t, sql)
+
+	//Output:
+	//test: NewQueryRequestFromUrl(select * from access_log {where} order by start_time desc limit 2) -> select * from access_log
+	//WHERE zone = 'plano' AND location = 'texas' order by start_time desc limit 2
+	//test: NewQueryRequestFromUrl(select * from access_log {where} order by start_time desc limit 2) -> select * from access_log order by start_time desc limit 2
 
 }
