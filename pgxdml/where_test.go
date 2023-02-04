@@ -2,8 +2,19 @@ package pgxdml
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 )
+
+func ExampleBuildWhere() {
+	u, _ := url.Parse("http://www.google.com/search?loc=texas&zone=frisco")
+	where := BuildWhere(u)
+	fmt.Printf("test: BuildWhere(u) -> %v\n", where)
+
+	//Output:
+	//test: BuildWhere(u) -> [{loc texas} {zone frisco}]
+
+}
 
 func ExampleWriteWhere() {
 	sb := strings.Builder{}

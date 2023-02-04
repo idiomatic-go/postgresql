@@ -2,8 +2,24 @@ package pgxdml
 
 import (
 	"errors"
+	"net/url"
 	"strings"
 )
+
+func BuildWhere(url *url.URL) []Attr {
+	if url == nil {
+		return nil
+	}
+	values := url.Query()
+	if len(values) == 0 {
+		return nil
+	}
+	var where []Attr
+	for k, v := range values {
+		where = append(where, Attr{Name: k, Val: v[0]})
+	}
+	return where
+}
 
 func WriteWhere(sb *strings.Builder, terminate bool, attrs []Attr) error {
 	max := len(attrs) - 1
