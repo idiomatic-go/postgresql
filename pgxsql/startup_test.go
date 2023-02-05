@@ -12,11 +12,11 @@ import (
 // "postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
 
 const (
-	serviceUrl = ""
+	serviceUrl  = ""
+	postgresUri = "github.com/idiomatic-go/postgresql/pgxsql"
 )
 
 func Example_Startup() {
-	//fmt.Printf("test: Uri -> %v\n", Uri)
 	fmt.Printf("test: IsStarted() -> %v\n", IsStarted())
 	err := testStartup()
 	if err != nil {
@@ -25,7 +25,7 @@ func Example_Startup() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
 
-		status := Ping[template.DebugError](nil)
+		status := messaging.Ping[template.DebugError](nil, postgresUri)
 		fmt.Printf("test: messaging.Ping() -> %v\n", status)
 
 	}

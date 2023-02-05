@@ -42,7 +42,6 @@ func init() {
 }
 
 var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
-	start := time.Now()
 	switch msg.Event {
 	case messaging.StartupEvent:
 		clientStartup(msg)
@@ -55,6 +54,7 @@ var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
 	case messaging.ShutdownEvent:
 		ClientShutdown()
 	case messaging.PingEvent:
+		start := time.Now()
 		messaging.ReplyTo(msg, Ping[template.LogError](nil).SetDuration(time.Since(start)))
 	}
 }
@@ -66,7 +66,7 @@ func receive() {
 			if !open {
 				return
 			}
-			messageHandler(msg)
+			go messageHandler(msg)
 		default:
 		}
 	}

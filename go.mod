@@ -3,7 +3,7 @@ module github.com/idiomatic-go/postgresql
 go 1.18
 
 require (
-	github.com/idiomatic-go/middleware v0.0.0-20230205101347-3d3e7a890cfe
+	github.com/idiomatic-go/middleware v0.0.0-20230205145530-46c2729e1620
 	github.com/jackc/pgx/v5 v5.2.0
 )
 
