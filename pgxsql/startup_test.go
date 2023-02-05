@@ -12,7 +12,7 @@ import (
 // "postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
 
 const (
-	serviceUrl = "postgres://tsdbadmin:akmoebwl97kl31yl@xz90jtzdq1.q2h8vd0pwk.tsdb.cloud.timescale.com:31770/tsdb?sslmode=require"
+	serviceUrl = ""
 )
 
 func Example_Startup() {
