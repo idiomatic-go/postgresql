@@ -12,9 +12,10 @@ const (
 	InsertNSS = UrnNID + ":" + "insert."
 	UpdateNSS = UrnNID + ":" + "update."
 	DeleteNSS = UrnNID + ":" + "delete."
-	//ExecNSS   = UrnNID + ":" + "exec."
-	PingUri = UrnNID + ":" + "ping"
-	StatUri = UrnNID + ":" + "stat"
+
+	PingUri  = UrnNID + ":" + PingPath
+	PingPath = "ping"
+	StatUri  = UrnNID + ":" + "stat"
 
 	selectCmd = 0
 	insertCmd = 1
