@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/idiomatic-go/middleware/messaging"
 	"github.com/idiomatic-go/middleware/template"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -14,7 +15,7 @@ var (
 func Stat[E template.ErrorHandler](ctx context.Context) (stat *pgxpool.Stat, status *template.Status) {
 	var e E
 	var limited = false
-	var fn template.ActuatorComplete
+	var fn messaging.ActuatorComplete
 
 	fn, ctx, limited = actuatorApply(ctx, &status, StatUri, template.ContextRequestId(ctx), "GET")
 	defer fn()

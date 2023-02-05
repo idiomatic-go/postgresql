@@ -6,6 +6,7 @@ import (
 	"github.com/idiomatic-go/middleware/template"
 	"reflect"
 	"sync/atomic"
+	"time"
 )
 
 type pkg struct{}
@@ -15,7 +16,7 @@ var (
 	c             = make(chan messaging.Message, 1)
 	pkgPath       = reflect.TypeOf(any(pkg{})).PkgPath()
 	started       int64
-	actuatorApply template.ActuatorApply
+	actuatorApply messaging.ActuatorApply
 )
 
 func IsStarted() bool {
@@ -33,7 +34,7 @@ func resetStarted() {
 func complete() {}
 
 func init() {
-	actuatorApply = func(ctx context.Context, status **template.Status, uri, requestId, method string) (template.ActuatorComplete, context.Context, bool) {
+	actuatorApply = func(ctx context.Context, status **template.Status, uri, requestId, method string) (messaging.ActuatorComplete, context.Context, bool) {
 		return complete, ctx, false
 	}
 	messaging.RegisterResource(Uri, c)
@@ -41,11 +42,20 @@ func init() {
 }
 
 var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
+	start := time.Now()
 	switch msg.Event {
 	case messaging.StartupEvent:
 		clientStartup(msg)
+		if IsStarted() {
+			apply := messaging.AccessActuatorApply(&msg)
+			if apply != nil {
+				actuatorApply = apply
+			}
+		}
 	case messaging.ShutdownEvent:
 		ClientShutdown()
+	case messaging.PingEvent:
+		messaging.ReplyTo(msg, Ping[template.LogError](nil).SetDuration(time.Since(start)))
 	}
 }
 

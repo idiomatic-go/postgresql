@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/idiomatic-go/middleware/messaging"
 	"github.com/idiomatic-go/middleware/template"
 )
 
@@ -13,7 +14,7 @@ var (
 func Ping[E template.ErrorHandler](ctx context.Context) (status *template.Status) {
 	var e E
 	var limited = false
-	var fn template.ActuatorComplete
+	var fn messaging.ActuatorComplete
 
 	if ctx == nil {
 		ctx = context.Background()
