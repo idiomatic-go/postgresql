@@ -14,74 +14,60 @@ func NilEmpty(s string) string {
 
 
 */
+
 func ExampleFmtValues() {
 	var ptr *int
 
 	v, err := FmtValue(nil)
-	fmt.Printf("Value  [nil]  : %v\n", NilEmpty(v))
-	fmt.Printf("Error         : %v\n", err)
+	fmt.Printf("test: FmtValue(nil) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
 	v, err = FmtValue(ptr)
-	fmt.Printf("Value  [ptr]  : %v\n", NilEmpty(v))
-	fmt.Printf("Error         : %v\n", err)
+	fmt.Printf("test: FmtValue(ptr) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
 	var n = 123
 	v, err = FmtValue(&n)
-	fmt.Printf("Value  [ptr]  : %v\n", NilEmpty(v))
-	fmt.Printf("Error         : %v\n", err)
+	fmt.Printf("test: FmtValue(&n) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
 	v, err = FmtValue(true)
-	fmt.Printf("Value  [true] : %v\n", NilEmpty(v))
-	fmt.Printf("Error         : %v\n", err)
+	fmt.Printf("test: FmtValue(true) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
 	v, err = FmtValue(1001)
-	fmt.Printf("Value  [1001] : %v\n", NilEmpty(v))
-	fmt.Printf("Error         : %v\n", err)
+	fmt.Printf("test: FmtValue(1001) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
 	v, err = FmtValue("")
-	fmt.Printf("Value  [\"\"]   : %v\n", NilEmpty(v))
-	fmt.Printf("Error         : %v\n", err)
+	fmt.Printf("test: FmtValue(\"\") -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
 	//t := time.Now()
 	//v, err = FmtValue(t)
-	//fmt.Printf("Value  [time.Now] : %v\n", NilEmpty(v[:19]))
-	//fmt.Printf("Error             : %v\n", err)
 
 	v, err = FmtValue("test string")
-	fmt.Printf("Value  [test string]  : %v\n", NilEmpty(v))
-	fmt.Printf("Error                 : %v\n", err)
-
-	v, err = FmtValue(Function("now()"))
-	fmt.Printf("Value  [now()]  : %v\n", NilEmpty(v))
-	fmt.Printf("Error           : %v\n", err)
-
-	v, err = FmtValue("drop table")
-	fmt.Printf("Value  [drop table]  : %v\n", NilEmpty(v))
-	fmt.Printf("Error                : %v\n", err)
+	fmt.Printf("test: FmtValue(test string) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
 	//Output:
-	//Value  [nil]  : NULL
-	//Error         : <nil>
-	//Value  [ptr]  : NULL
-	//Error         : <nil>
-	//Value  [ptr]  : <nil>
-	//Error         : invalid argument : pointer types are not supported : *int
-	//Value  [true] : true
-	//Error         : <nil>
-	//Value  [1001] : 1001
-	//Error         : <nil>
-	//Value  [""]   : ''
-	//Error         : <nil>
-	//Value  [test string]  : 'test string'
-	//Error                 : <nil>
-	//Value  [now()]  : now()
-	//Error           : <nil>
-	//Value  [drop table]  : <nil>
-	//Error                : SQL injection embedded in string [drop table] : drop table
+	//test: FmtValue(nil) -> [error:<nil>] [value:NULL]
+	//test: FmtValue(ptr) -> [error:<nil>] [value:NULL]
+	//test: FmtValue(&n) -> [error:invalid argument : pointer types are not supported : *int] [value:<nil>]
+	//test: FmtValue(true) -> [error:<nil>] [value:true]
+	//test: FmtValue(1001) -> [error:<nil>] [value:1001]
+	//test: FmtValue("") -> [error:<nil>] [value:'']
+	//test: FmtValue(test string) -> [error:<nil>] [value:'test string']
+
+}
+
+func ExampleFmtSqlValues() {
+	v, err := FmtValue(Function("now()"))
+	fmt.Printf("test: FmtValue(now()) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
+
+	v, err = FmtValue("drop table")
+	fmt.Printf("test: FmtValue(drop table) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
+
+	//Output:
+	//test: FmtValue(now()) -> [error:<nil>] [value:now()]
+	//test: FmtValue(drop table) -> [error:SQL injection embedded in string [drop table] : drop table] [value:<nil>]
+
 }
 
 func ExampleFmtAttr() {
-
 	s, err := FmtAttr(Attr{})
 	fmt.Printf("Name  [\"\"]  : %v\n", NilEmpty(s))
 	fmt.Printf("Error       : %v\n", err)

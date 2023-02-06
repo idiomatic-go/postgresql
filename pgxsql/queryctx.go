@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/idiomatic-go/middleware/template"
 	"time"
 )
 
@@ -32,7 +31,7 @@ func ContextQuery(ctx context.Context, req *Request) (Rows, error) {
 		return nil, errors.New("context is nil")
 	}
 	i := ctx.Value(queryContextKey)
-	if template.IsNil(i) {
+	if i == nil {
 		return nil, errors.New("context value is nil")
 	}
 	if query, ok := i.(QueryProxy); ok && query != nil {

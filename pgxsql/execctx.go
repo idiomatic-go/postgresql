@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/idiomatic-go/middleware/template"
 	"time"
 )
 
@@ -27,7 +26,7 @@ func ContextExec(ctx context.Context, req *Request) (CommandTag, error) {
 		return emptyCommandTag, errors.New("context is nil")
 	}
 	i := ctx.Value(queryContextKey)
-	if template.IsNil(i) {
+	if i == nil {
 		return emptyCommandTag, errors.New("context value nil")
 	}
 	if exec, ok := i.(ExecProxy); ok && exec != nil {

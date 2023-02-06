@@ -26,6 +26,8 @@ github.com/idiomatic-go/middleware v0.0.0-20230205145204-ec42b8454b38 h1:sN99rGe
 github.com/idiomatic-go/middleware v0.0.0-20230205145204-ec42b8454b38/go.mod h1:fjbfvQbXWIYCJ8s1HjT2bteAoyplLw440xTDsCllhS8=
 github.com/idiomatic-go/middleware v0.0.0-20230205145530-46c2729e1620 h1:p8JL0oNfmEdE/yqmt6+Ea06u9OCQXzah8NnxDhW6PDs=
 github.com/idiomatic-go/middleware v0.0.0-20230205145530-46c2729e1620/go.mod h1:fjbfvQbXWIYCJ8s1HjT2bteAoyplLw440xTDsCllhS8=
+github.com/idiomatic-go/middleware v0.0.0-20230206193314-deb52b9d338d h1:J4b8P1mC2TThYhdY1j2EFPt/LcAfxY1N3Q6l7hdnV2w=
+github.com/idiomatic-go/middleware v0.0.0-20230206193314-deb52b9d338d/go.mod h1:fjbfvQbXWIYCJ8s1HjT2bteAoyplLw440xTDsCllhS8=
 github.com/idiomatic-go/resiliency v0.0.0-20230205083124-e5693c90e174 h1:O6l6A2RbMdEzx0AlMYQ0l2OmJ249aBuSMuVvfEbrRzM=
 github.com/idiomatic-go/resiliency v0.0.0-20230205083124-e5693c90e174/go.mod h1:1NThCqdVnRXOH9goZgyh1MZODp6oQCphGtChOgomeBY=
 github.com/idiomatic-go/resiliency v0.0.0-20230205090904-d96dbed605f6 h1:CgdOiBhnrhVyoV+8JnKUSUXNJeXRCEBKD6c+rjrQrxg=

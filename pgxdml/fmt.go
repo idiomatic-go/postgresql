@@ -3,7 +3,6 @@ package pgxdml
 import (
 	"errors"
 	"fmt"
-	"github.com/idiomatic-go/middleware/template"
 	"reflect"
 	"strings"
 	"time"
@@ -14,11 +13,14 @@ func TrimDoubleSpace(s string) string {
 }
 
 func FmtValue(v any) (string, error) {
-	if template.IsNil(v) {
+	if v == nil {
 		return "NULL", nil
 	}
 	t := reflect.TypeOf(v)
 	if t.Kind() == reflect.Pointer {
+		if reflect.ValueOf(v).IsNil() {
+			return "NULL", nil
+		}
 		return "", errors.New(fmt.Sprintf("invalid argument : pointer types are not supported : %v", t.String()))
 	}
 	// Process time.Time first
