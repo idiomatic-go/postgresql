@@ -3,12 +3,13 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/idiomatic-go/middleware/messaging"
-	"github.com/idiomatic-go/middleware/template"
+	"github.com/idiomatic-go/motif/messaging"
+	"github.com/idiomatic-go/motif/runtime"
+	"github.com/idiomatic-go/motif/template"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *template.Status) {
+func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn messaging.ActuatorComplete
@@ -17,12 +18,12 @@ func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...a
 		ctx = context.Background()
 	}
 	if req == nil {
-		return nil, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetCode(template.StatusInvalidArgument)
+		return nil, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, template.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
-		return nil, template.NewStatusCode(template.StatusRateLimited)
+		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
 	if IsContextQuery(ctx) {
 		var err error
@@ -30,13 +31,13 @@ func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...a
 		return result, e.HandleWithContext(ctx, execLoc, err)
 	}
 	if dbClient == nil {
-		return nil, e.HandleWithContext(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(template.StatusInvalidArgument)
+		return nil, e.HandleWithContext(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
 	pgxRows, err := dbClient.Query(ctx, req.BuildSql(), args...)
 	if err != nil {
 		return nil, e.HandleWithContext(ctx, queryLoc, recast(err))
 	}
-	return &proxyRows{pgxRows: pgxRows, fd: fieldDescriptions(pgxRows.FieldDescriptions())}, template.NewStatusOK()
+	return &proxyRows{pgxRows: pgxRows, fd: fieldDescriptions(pgxRows.FieldDescriptions())}, runtime.NewStatusOK()
 }
 
 func fieldDescriptions(fields []pgconn.FieldDescription) []FieldDescription {

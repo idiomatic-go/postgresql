@@ -2,8 +2,9 @@ package pgxsql
 
 import (
 	"context"
-	"github.com/idiomatic-go/middleware/messaging"
-	"github.com/idiomatic-go/middleware/template"
+	"github.com/idiomatic-go/motif/messaging"
+	"github.com/idiomatic-go/motif/runtime"
+	"github.com/idiomatic-go/motif/template"
 	"reflect"
 	"sync/atomic"
 	"time"
@@ -34,7 +35,7 @@ func resetStarted() {
 func complete() {}
 
 func init() {
-	actuatorApply = func(ctx context.Context, status **template.Status, uri, requestId, method string) (messaging.ActuatorComplete, context.Context, bool) {
+	actuatorApply = func(ctx context.Context, status **runtime.Status, uri, requestId, method string) (messaging.ActuatorComplete, context.Context, bool) {
 		return complete, ctx, false
 	}
 	messaging.RegisterResource(Uri, c)

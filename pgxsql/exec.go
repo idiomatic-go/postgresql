@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/idiomatic-go/middleware/messaging"
-	"github.com/idiomatic-go/middleware/template"
+	"github.com/idiomatic-go/motif/messaging"
+	"github.com/idiomatic-go/motif/runtime"
+	"github.com/idiomatic-go/motif/template"
 )
 
 type CommandTag struct {
@@ -23,7 +24,7 @@ const (
 
 var execLoc = pkgPath + "/exec"
 
-func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (_ CommandTag, status *template.Status) {
+func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (_ CommandTag, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn messaging.ActuatorComplete
@@ -32,19 +33,19 @@ func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req
 		ctx = context.Background()
 	}
 	if req == nil {
-		return CommandTag{}, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetCode(template.StatusInvalidArgument)
+		return CommandTag{}, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, template.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
-		return CommandTag{}, template.NewStatusCode(template.StatusRateLimited)
+		return CommandTag{}, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
 	if IsContextExec(ctx) {
 		result, err := ContextExec(ctx, req)
 		return result, e.HandleWithContext(ctx, execLoc, err)
 	}
 	if dbClient == nil {
-		return CommandTag{}, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetCode(template.StatusInvalidArgument)
+		return CommandTag{}, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)
@@ -64,5 +65,5 @@ func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req
 	if err != nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, err)
 	}
-	return CommandTag{Sql: t.String(), RowsAffected: t.RowsAffected(), Insert: t.Insert(), Update: t.Update(), Delete: t.Delete(), Select: t.Select()}, template.NewStatusOK()
+	return CommandTag{Sql: t.String(), RowsAffected: t.RowsAffected(), Insert: t.Insert(), Update: t.Update(), Delete: t.Delete(), Select: t.Select()}, runtime.NewStatusOK()
 }

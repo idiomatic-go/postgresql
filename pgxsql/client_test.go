@@ -2,7 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/idiomatic-go/middleware/messaging"
+	"github.com/idiomatic-go/motif/messaging"
 )
 
 func ExampleClientStartup() {

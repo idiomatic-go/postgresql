@@ -3,15 +3,16 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/idiomatic-go/middleware/messaging"
-	"github.com/idiomatic-go/middleware/template"
+	"github.com/idiomatic-go/motif/messaging"
+	"github.com/idiomatic-go/motif/runtime"
+	"github.com/idiomatic-go/motif/template"
 )
 
 var (
 	pingLoc = pkgPath + "/stat"
 )
 
-func Ping[E template.ErrorHandler](ctx context.Context) (status *template.Status) {
+func Ping[E template.ErrorHandler](ctx context.Context) (status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn messaging.ActuatorComplete
@@ -19,13 +20,13 @@ func Ping[E template.ErrorHandler](ctx context.Context) (status *template.Status
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	fn, ctx, limited = actuatorApply(ctx, &status, PingUri, template.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = actuatorApply(ctx, &status, PingUri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
-		return template.NewStatusCode(template.StatusRateLimited)
+		return runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
 	if dbClient == nil {
-		return e.HandleWithContext(ctx, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetCode(template.StatusInvalidArgument)
+		return e.HandleWithContext(ctx, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
 	return e.HandleWithContext(ctx, pingLoc, dbClient.Ping(ctx))
 }

@@ -3,8 +3,9 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/idiomatic-go/middleware/messaging"
-	"github.com/idiomatic-go/middleware/template"
+	"github.com/idiomatic-go/motif/messaging"
+	"github.com/idiomatic-go/motif/runtime"
+	"github.com/idiomatic-go/motif/template"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -12,18 +13,18 @@ var (
 	statLoc = pkgPath + "/stat"
 )
 
-func Stat[E template.ErrorHandler](ctx context.Context) (stat *pgxpool.Stat, status *template.Status) {
+func Stat[E template.ErrorHandler](ctx context.Context) (stat *pgxpool.Stat, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn messaging.ActuatorComplete
 
-	fn, ctx, limited = actuatorApply(ctx, &status, StatUri, template.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = actuatorApply(ctx, &status, StatUri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
-		return nil, template.NewStatusCode(template.StatusRateLimited)
+		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
 	if dbClient == nil {
-		return nil, e.HandleWithContext(ctx, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetCode(template.StatusInvalidArgument)
+		return nil, e.HandleWithContext(ctx, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	return dbClient.Stat(), template.NewStatusOK()
+	return dbClient.Stat(), runtime.NewStatusOK()
 }

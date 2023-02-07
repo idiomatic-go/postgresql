@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/idiomatic-go/middleware/template"
+	"github.com/idiomatic-go/motif/template"
 	"github.com/idiomatic-go/postgresql/pgxdml"
 	"time"
 )
@@ -130,5 +130,5 @@ func ExampleExec_Delete() {
 
 	//Output:
 	//test: Delete[template.DebugError](nil,DELETE FROM conditions) -> [status:OK] [cmd:{DELETE 1 1 false false true false}]
-	
+
 }

@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/idiomatic-go/middleware/template"
+	"github.com/idiomatic-go/motif/runtime"
+	"github.com/idiomatic-go/motif/template"
 	"github.com/idiomatic-go/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5/pgtype"
 	"time"
@@ -144,17 +145,17 @@ func ExampleQuery_Conditions_Where() {
 
 }
 
-func processResults(results Rows, msg string) (conditions []TestConditions, status *template.Status) {
+func processResults(results Rows, msg string) (conditions []TestConditions, status *runtime.Status) {
 	conditions, status = scanRows(results)
 	if status.OK() && len(conditions) == 0 {
-		return nil, template.NewStatusCode(template.StatusNotFound)
+		return nil, runtime.NewStatusCode(runtime.StatusNotFound)
 	}
 	return conditions, status
 }
 
-func scanRows(rows Rows) ([]TestConditions, *template.Status) {
+func scanRows(rows Rows) ([]TestConditions, *runtime.Status) {
 	if rows == nil {
-		return nil, template.NewStatusInvalidArgument("", errors.New("invalid request: Rows interface is empty"))
+		return nil, runtime.NewStatusInvalidArgument("", errors.New("invalid request: Rows interface is empty"))
 	}
 	var err error
 	var values []any
@@ -162,15 +163,15 @@ func scanRows(rows Rows) ([]TestConditions, *template.Status) {
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
-			return nil, template.NewStatusError("", err)
+			return nil, runtime.NewStatusError("", err)
 		}
 		values, err = rows.Values()
 		if err != nil {
-			return nil, template.NewStatusError("", err)
+			return nil, runtime.NewStatusError("", err)
 		}
 		conditions = append(conditions, scanColumns(values))
 	}
-	return conditions, template.NewStatusOK()
+	return conditions, runtime.NewStatusOK()
 }
 
 func scanColumns(values []any) TestConditions {

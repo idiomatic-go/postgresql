@@ -3,10 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/idiomatic-go/middleware/messaging"
-	"github.com/idiomatic-go/middleware/template"
-	"github.com/idiomatic-go/resiliency/actuator"
-	"time"
+	"github.com/idiomatic-go/motif/messaging"
+	"github.com/idiomatic-go/motif/template"
 )
 
 // "postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
@@ -45,14 +43,17 @@ func testStartup() error {
 	if IsStarted() {
 		return nil
 	}
-	c <- messaging.Message{
-		To:      "",
-		From:    "",
-		Event:   messaging.StartupEvent,
-		Status:  nil,
-		Content: []any{messaging.DatabaseUrl{Url: serviceUrl}, messaging.ActuatorApply(actuator.EgressApply)},
-		ReplyTo: nil,
-	}
-	time.Sleep(time.Second * 3)
+	/*
+		c <- messaging.Message{
+			To:      "",
+			From:    "",
+			Event:   messaging.StartupEvent,
+			Status:  nil,
+			Content: []any{messaging.DatabaseUrl{Url: serviceUrl}, messaging.ActuatorApply(actuator.EgressApply)},
+			ReplyTo: nil,
+		}
+		time.Sleep(time.Second * 3)
+
+	*/
 	return nil
 }

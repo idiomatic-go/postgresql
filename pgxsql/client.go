@@ -7,8 +7,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/idiomatic-go/middleware/messaging"
-	"github.com/idiomatic-go/middleware/template"
+	"github.com/idiomatic-go/motif/messaging"
+	"github.com/idiomatic-go/motif/runtime"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )
@@ -23,16 +23,12 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 	start := time.Now()
 	db := messaging.AccessDatabaseUrl(&msg)
 	credentials := messaging.AccessCredentials(&msg)
-	//if credentials == nil {
-	//	messaging.ReplyTo(msg, template.NewStatusError(clientLoc, errors.New("credentials function is nil")).SetDuration(time.Since(start)))
-	//	return
-	//}
 	err := ClientStartup(db, credentials)
 	if err != nil {
-		messaging.ReplyTo(msg, template.NewStatusError(clientLoc, err).SetDuration(time.Since(start)))
+		messaging.ReplyTo(msg, runtime.NewStatusError(clientLoc, err).SetDuration(time.Since(start)))
 		return
 	}
-	messaging.ReplyTo(msg, template.NewStatusOK().SetDuration(time.Since(start)))
+	messaging.ReplyTo(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
 }
 
 func ClientStartup(db messaging.DatabaseUrl, credentials messaging.Credentials) error {
