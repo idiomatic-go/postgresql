@@ -27,7 +27,7 @@ func ExampleNewInsertValues() {
 }
 
 func ExampleWriteInsert() {
-	var values InsertValues
+	var values [][]any
 	values = append(values, []any{100, "customer 1", false, NextValFn("test_entry_Id"), TimestampFn})
 	values = append(values, []any{200, "customer 2", true, NextValFn("test_entry_Id"), TimestampFn})
 

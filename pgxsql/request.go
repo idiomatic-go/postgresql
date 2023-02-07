@@ -45,7 +45,7 @@ type Request struct {
 	cmd      int
 	Uri      string
 	Template string
-	Values   pgxdml.InsertValues
+	Values   [][]any
 	Attrs    []pgxdml.Attr
 	Where    []pgxdml.Attr
 	Error    error
@@ -113,7 +113,7 @@ func NewQueryRequestFromUrl(resource, template string, url *url.URL) *Request {
 	return &Request{cmd: selectCmd, Uri: BuildQueryUri(resource), Template: template, Where: pgxdml.BuildWhere(url)}
 }
 
-func NewInsertRequest(resource, template string, values pgxdml.InsertValues) *Request {
+func NewInsertRequest(resource, template string, values [][]any) *Request {
 	return &Request{cmd: insertCmd, Uri: BuildInsertUri(resource), Template: template, Values: values}
 }
 

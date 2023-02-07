@@ -14,17 +14,17 @@ INSERT INTO table_name (column_list) VALUES
 
 */
 
-type InsertValues [][]any
+//type InsertValues [][]any
 
-func NewInsertValues(v []any) InsertValues {
+func NewInsertValues(v []any) [][]any {
 	if len(v) == 0 {
 		return nil
 	}
-	var values InsertValues
+	var values [][]any
 	return append(values, v)
 }
 
-func WriteInsert(sql string, values InsertValues) (string, error) {
+func WriteInsert(sql string, values [][]any) (string, error) {
 	sb := strings.Builder{}
 
 	sb.WriteString(sql)

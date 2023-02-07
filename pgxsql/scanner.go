@@ -5,7 +5,7 @@ import (
 )
 
 type Scanner[T any] interface {
-	Scan(fields []FieldDescription, values []any) (T, error)
+	Scan(columnNames []string, values []any) (T, error)
 }
 
 func Scan[T Scanner[T]](rows Rows) ([]T, error) {
@@ -17,6 +17,8 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 	var err error
 	var values []any
 
+	defer rows.Close()
+	names := createColumnNames(rows.FieldDescriptions())
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
@@ -26,11 +28,19 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 		if err != nil {
 			return t, err
 		}
-		val, err1 := s.Scan(rows.FieldDescriptions(), values)
+		val, err1 := s.Scan(names, values)
 		if err1 != nil {
 			return t, err1
 		}
 		t = append(t, val)
 	}
 	return t, nil
+}
+
+func createColumnNames(fields []FieldDescription) []string {
+	var names []string
+	for _, fld := range fields {
+		names = append(names, fld.Name)
+	}
+	return names
 }
