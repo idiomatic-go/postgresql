@@ -3,7 +3,7 @@ package pgxdml
 import "fmt"
 
 const (
-	NowFn       = "now()"
+	//NowFn       = "now()"
 	TimestampFn = Function("now()")
 
 	nextValFnFmt = "nextval('%s')"

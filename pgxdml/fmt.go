@@ -25,7 +25,7 @@ func FmtValue(v any) (string, error) {
 	}
 	// Process time.Time first
 	if t, ok := v.(time.Time); ok {
-		return FmtTimestamp(t), nil
+		return fmt.Sprintf(stringFmt, FmtTimestamp(t)), nil
 	}
 	if t.Kind() != reflect.String {
 		return fmt.Sprintf(valueFmt, v), nil
@@ -33,9 +33,9 @@ func FmtValue(v any) (string, error) {
 	if _, function := v.(Function); function {
 		return fmt.Sprintf(valueFmt, v), nil
 	}
-	if str, ok := v.(string); ok && str == NowFn {
-		return fmt.Sprintf(valueFmt, v), nil
-	}
+	//if str, ok := v.(string); ok && str == NowFn {
+	//	return fmt.Sprintf(valueFmt, v), nil
+	//}
 	err := SanitizeString(v.(string))
 	if err != nil {
 		return "", err

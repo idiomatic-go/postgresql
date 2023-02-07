@@ -2,6 +2,7 @@ package pgxdml
 
 import (
 	"fmt"
+	"time"
 )
 
 /*
@@ -37,8 +38,11 @@ func ExampleFmtValues() {
 	v, err = FmtValue("")
 	fmt.Printf("test: FmtValue(\"\") -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
-	v, err = FmtValue(NowFn)
-	fmt.Printf("test: FmtValue(now()) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
+	//v, err = FmtValue(NowFn)
+	//fmt.Printf("test: FmtValue(now()) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
+
+	v, err = FmtValue(time.Date(2023, 2, 5, 13, 25, 56, 0, time.UTC))
+	fmt.Printf("test: FmtValue(time.Now()) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
 	v, err = FmtValue("test string")
 	fmt.Printf("test: FmtValue(test string) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
@@ -50,7 +54,7 @@ func ExampleFmtValues() {
 	//test: FmtValue(true) -> [error:<nil>] [value:true]
 	//test: FmtValue(1001) -> [error:<nil>] [value:1001]
 	//test: FmtValue("") -> [error:<nil>] [value:'']
-	//test: FmtValue(now()) -> [error:<nil>] [value:now()]
+	//test: FmtValue(time.Now()) -> [error:<nil>] [value:'2023-02-05 13:25:56.000000']
 	//test: FmtValue(test string) -> [error:<nil>] [value:'test string']
 
 }
