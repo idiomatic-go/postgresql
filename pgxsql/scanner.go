@@ -28,7 +28,6 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 		if err != nil {
 			return t, err
 		}
-		convertTimestamps(rows.FieldDescriptions(), values)
 		val, err1 := s.Scan(names, values)
 		if err1 != nil {
 			return t, err1
@@ -44,16 +43,4 @@ func createColumnNames(fields []FieldDescription) []string {
 		names = append(names, fld.Name)
 	}
 	return names
-}
-
-func convertTimestamps(fields []FieldDescription, values []any) {
-	for i, fld := range fields {
-		v := values[i]
-		if v != nil {
-		}
-		if fld.DataTypeOID == 1184 {
-
-		}
-	}
-
 }
