@@ -37,8 +37,8 @@ func ExampleFmtValues() {
 	v, err = FmtValue("")
 	fmt.Printf("test: FmtValue(\"\") -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
-	//t := time.Now()
-	//v, err = FmtValue(t)
+	v, err = FmtValue(NowFn)
+	fmt.Printf("test: FmtValue(now()) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
 
 	v, err = FmtValue("test string")
 	fmt.Printf("test: FmtValue(test string) -> [error:%v] [value:%v]\n", err, NilEmpty(v))
@@ -50,6 +50,7 @@ func ExampleFmtValues() {
 	//test: FmtValue(true) -> [error:<nil>] [value:true]
 	//test: FmtValue(1001) -> [error:<nil>] [value:1001]
 	//test: FmtValue("") -> [error:<nil>] [value:'']
+	//test: FmtValue(now()) -> [error:<nil>] [value:now()]
 	//test: FmtValue(test string) -> [error:<nil>] [value:'test string']
 
 }

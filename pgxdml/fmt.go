@@ -33,6 +33,9 @@ func FmtValue(v any) (string, error) {
 	if _, function := v.(Function); function {
 		return fmt.Sprintf(valueFmt, v), nil
 	}
+	if str, ok := v.(string); ok && str == NowFn {
+		return fmt.Sprintf(valueFmt, v), nil
+	}
 	err := SanitizeString(v.(string))
 	if err != nil {
 		return "", err
