@@ -47,8 +47,11 @@ func createColumnNames(fields []FieldDescription) []string {
 }
 
 func convertTimestamps(fields []FieldDescription, values []any) {
-	for _, fld := range fields {
-		if fld.DataTypeOID == 0 {
+	for i, fld := range fields {
+		v := values[i]
+		if v != nil {
+		}
+		if fld.DataTypeOID == 1184 {
 
 		}
 	}
