@@ -8,6 +8,7 @@ type Scanner[T any] interface {
 	Scan(columnNames []string, values []any) (T, error)
 }
 
+// Scan - scan rows into a slice
 func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 	if rows == nil {
 		return nil, errors.New("invalid request: rows interface is nil")
