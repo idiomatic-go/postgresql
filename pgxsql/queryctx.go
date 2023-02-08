@@ -16,9 +16,10 @@ type contextKey struct {
 
 func (k *contextKey) String() string { return "context value " + k.name }
 
+// QueryProxy - proxy type for the Query function
 type QueryProxy func(req *Request) (Rows, error)
 
-// ContextWithQuery - creates a new Context with a Query function
+// ContextWithQuery - creates a new Context with a Query proxy
 func ContextWithQuery(ctx context.Context, fn QueryProxy) context.Context {
 	if ctx == nil {
 		ctx = context.Background()
@@ -26,6 +27,7 @@ func ContextWithQuery(ctx context.Context, fn QueryProxy) context.Context {
 	return &queryCtx{ctx, queryContextKey, fn}
 }
 
+// ContextQuery - calls the Query proxy
 func ContextQuery(ctx context.Context, req *Request) (Rows, error) {
 	if ctx == nil {
 		return nil, errors.New("context is nil")
@@ -40,6 +42,7 @@ func ContextQuery(ctx context.Context, req *Request) (Rows, error) {
 	return nil, errors.New("context value is not of QueryProxy type")
 }
 
+// IsContextQuery - determines if the context is a Query proxy context
 func IsContextQuery(c context.Context) bool {
 	if c == nil {
 		return false

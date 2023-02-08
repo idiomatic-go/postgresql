@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
+// Query - generic function for running a Query
 func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *runtime.Status) {
 	var e E
 	var limited = false

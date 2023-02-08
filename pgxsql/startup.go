@@ -20,6 +20,7 @@ var (
 	actuatorApply messaging.ActuatorApply
 )
 
+// IsStarted - returns status of startup
 func IsStarted() bool {
 	return atomic.LoadInt64(&started) != 0
 }

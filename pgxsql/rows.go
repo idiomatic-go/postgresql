@@ -2,6 +2,7 @@ package pgxsql
 
 import "github.com/jackc/pgx/v5"
 
+// FieldDescription - data for defining the returned Query fields/columns
 type FieldDescription struct {
 	Name                 string
 	TableOID             uint32
@@ -12,6 +13,7 @@ type FieldDescription struct {
 	Format               int16
 }
 
+// Rows - interface that proxies the postgresql Rows interface
 type Rows interface {
 	// Close closes the rows, making the connection ready for use again. It is safe
 	// to call Close after rows is already closed.

@@ -11,9 +11,10 @@ var (
 	emptyCommandTag = CommandTag{}
 )
 
+// ExecProxy - proxy type for the Exec function
 type ExecProxy func(req *Request) (CommandTag, error)
 
-// ContextWithExec - creates a new Context with an Exec function
+// ContextWithExec - creates a new Context with an Exec proxy
 func ContextWithExec(ctx context.Context, fn ExecProxy) context.Context {
 	if ctx == nil {
 		ctx = context.Background()
@@ -21,6 +22,7 @@ func ContextWithExec(ctx context.Context, fn ExecProxy) context.Context {
 	return &execCtx{ctx, execContextKey, fn}
 }
 
+// ContextExec - calls the Exec proxy
 func ContextExec(ctx context.Context, req *Request) (CommandTag, error) {
 	if ctx == nil {
 		return emptyCommandTag, errors.New("context is nil")
@@ -35,6 +37,7 @@ func ContextExec(ctx context.Context, req *Request) (CommandTag, error) {
 	return CommandTag{}, errors.New("context value is not of type ExecProxy")
 }
 
+// IsContextExec - determines if the context is an Exec proxy context
 func IsContextExec(c context.Context) bool {
 	if c == nil {
 		return false

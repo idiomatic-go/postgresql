@@ -31,6 +31,7 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 	messaging.ReplyTo(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
 }
 
+// ClientStartup - entry point for creating the pooling client and verifying a connection can be acquired
 func ClientStartup(db messaging.DatabaseUrl, credentials messaging.Credentials) error {
 	if IsStarted() {
 		return nil

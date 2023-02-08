@@ -24,6 +24,7 @@ const (
 
 var execLoc = pkgPath + "/exec"
 
+// Exec - generic function for executing a statement, usually one of insert, update, delete
 func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (_ CommandTag, status *runtime.Status) {
 	var e E
 	var limited = false

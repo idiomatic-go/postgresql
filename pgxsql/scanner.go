@@ -4,6 +4,7 @@ import (
 	"errors"
 )
 
+// Scanner - generic interface for scanning a row set into a slice of types
 type Scanner[T any] interface {
 	Scan(columnNames []string, values []any) (T, error)
 }

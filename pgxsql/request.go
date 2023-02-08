@@ -25,22 +25,27 @@ const (
 	variableReference = "$1"
 )
 
+// BuildQueryUri - build an uri with the Query NSS
 func BuildQueryUri(resource string) string {
 	return QueryNSS + resource
 }
 
+// BuildInsertUri - build an uri with the Insert NSS
 func BuildInsertUri(resource string) string {
 	return InsertNSS + resource
 }
 
+// BuildUpdateUri - build an uri with the Update NSS
 func BuildUpdateUri(resource string) string {
 	return UpdateNSS + resource
 }
 
+// BuildDeleteUri - build an uri with the Delete NSS
 func BuildDeleteUri(resource string) string {
 	return DeleteNSS + resource
 }
 
+// Request - contains data needed to build the SQL statement related to the uri
 type Request struct {
 	cmd      int
 	Uri      string
@@ -124,15 +129,3 @@ func NewUpdateRequest(resource, template string, attrs []pgxdml.Attr, where []pg
 func NewDeleteRequest(resource, template string, where []pgxdml.Attr) *Request {
 	return &Request{cmd: deleteCmd, Uri: BuildDeleteUri(resource), Template: template, Attrs: nil, Where: where}
 }
-
-/*
-func NewExecRequest(resource, sql string) Request {
-	return Request{Uri: BuildExecUri(resource), Sql: sql}
-}
-
-func BuildExecUri(resource string) string {
-	return ExecNSS + resource
-}
-
-
-*/
