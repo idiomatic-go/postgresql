@@ -10,6 +10,7 @@ import (
 // DROP TABLE, DELETE FROM, SELECT * FROM, a double-dashed sequence ‘--’, or a semicolon ;
 // quotes /*
 
+// SanitizeString - verify that a string does not contain any text associated with a SQL injection
 func SanitizeString(s string) error {
 	trimmed := TrimDoubleSpace(strings.ToLower(s))
 	for _, t := range tokens {

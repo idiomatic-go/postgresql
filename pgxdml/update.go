@@ -20,6 +20,7 @@ WHERE condition;
 
 */
 
+// WriteUpdate - build a SQL update statement, including SET and WHERE clauses
 func WriteUpdate(sql string, attrs []Attr, where []Attr) (string, error) {
 	var sb strings.Builder
 
@@ -33,6 +34,7 @@ func WriteUpdate(sql string, attrs []Attr, where []Attr) (string, error) {
 	return sb.String(), err
 }
 
+// WriteUpdateSet - build a SQL set clause
 func WriteUpdateSet(sb *strings.Builder, attrs []Attr) error {
 	max := len(attrs) - 1
 	if max < 0 {

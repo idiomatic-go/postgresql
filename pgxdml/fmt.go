@@ -8,10 +8,12 @@ import (
 	"time"
 )
 
+// TrimDoubleSpace - remove extra spaces
 func TrimDoubleSpace(s string) string {
 	return strings.Join(strings.Fields(s), " ")
 }
 
+// FmtValue - format a value to be used in a SQL statment
 func FmtValue(v any) (string, error) {
 	if v == nil {
 		return "NULL", nil
@@ -40,6 +42,7 @@ func FmtValue(v any) (string, error) {
 	return fmt.Sprintf(stringFmt, v.(string)), nil
 }
 
+// FmtAttr - format a name, value pair for a SQL statement
 func FmtAttr(attr Attr) (string, error) {
 	if attr.Name == "" {
 		return "", errors.New("invalid attribute argument, attribute name is empty")

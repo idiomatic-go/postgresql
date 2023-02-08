@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// BuildWhere - build the []Attr based on the URL query parameters
 func BuildWhere(url *url.URL) []Attr {
 	if url == nil {
 		return nil
@@ -21,6 +22,7 @@ func BuildWhere(url *url.URL) []Attr {
 	return where
 }
 
+// WriteWhere - build a SQL WHERE clause utilizing the given []Attr
 func WriteWhere(sb *strings.Builder, terminate bool, attrs []Attr) error {
 	max := len(attrs) - 1
 	if max < 0 {
@@ -34,6 +36,7 @@ func WriteWhere(sb *strings.Builder, terminate bool, attrs []Attr) error {
 	return nil
 }
 
+// WriteWhereAttributes - build a SQL statement only containing the []Attr conditionals
 func WriteWhereAttributes(sb *strings.Builder, attrs []Attr) error {
 	max := len(attrs) - 1
 	if max < 0 {

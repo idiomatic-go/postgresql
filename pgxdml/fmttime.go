@@ -2,8 +2,9 @@ package pgxdml
 
 import "time"
 
+// FmtTimestamp - format a time.Time as a timestamp, YYYY-MM-DD HH:MM:SS MS similiarawith the following
 func FmtTimestamp(t time.Time) string {
-	buf := []byte{}
+	var buf []byte
 	t = t.UTC()
 	year, month, day := t.Date()
 	itoa(&buf, year, 4)

@@ -14,8 +14,7 @@ INSERT INTO table_name (column_list) VALUES
 
 */
 
-//type InsertValues [][]any
-
+// NewInsertValues - create a 2-dimensional array of any out of a slice of any
 func NewInsertValues(v []any) [][]any {
 	if len(v) == 0 {
 		return nil
@@ -24,6 +23,7 @@ func NewInsertValues(v []any) [][]any {
 	return append(values, v)
 }
 
+// WriteInsert - build a SQL insert statement with values list
 func WriteInsert(sql string, values [][]any) (string, error) {
 	sb := strings.Builder{}
 
@@ -42,6 +42,7 @@ func WriteInsert(sql string, values [][]any) (string, error) {
 	return sb.String(), nil
 }
 
+// WriteInsertValues - build the values list of a SQL insert statement
 func WriteInsertValues(sb *strings.Builder, values []any) error {
 	max := len(values) - 1
 	if max < 0 {
