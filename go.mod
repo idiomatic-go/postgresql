@@ -3,7 +3,7 @@ module github.com/idiomatic-go/postgresql
 go 1.18
 
 require (
-	github.com/idiomatic-go/motif v0.0.0-20230207201156-8f29691c9fe9
+	github.com/idiomatic-go/motif v0.0.0-20230208152533-1cfd6d4b8f7d
 	github.com/jackc/pgx/v5 v5.2.0
 )
 
@@ -15,6 +15,6 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90 // indirect
 	golang.org/x/sync v0.0.0-20220923202941-7f9b1623fab7 // indirect
-	golang.org/x/text v0.5.0 // indirect
-	google.golang.org/grpc v1.52.3 // indirect
+	golang.org/x/text v0.6.0 // indirect
+	google.golang.org/grpc v1.53.0 // indirect
 )
