@@ -24,6 +24,9 @@ func ContextWithQuery(ctx context.Context, fn QueryProxy) context.Context {
 	if ctx == nil {
 		ctx = context.Background()
 	}
+	if fn == nil {
+		return ctx
+	}
 	return &queryCtx{ctx, queryContextKey, fn}
 }
 

@@ -19,6 +19,9 @@ func ContextWithExec(ctx context.Context, fn ExecProxy) context.Context {
 	if ctx == nil {
 		ctx = context.Background()
 	}
+	if fn == nil {
+		return ctx
+	}
 	return &execCtx{ctx, execContextKey, fn}
 }
 
