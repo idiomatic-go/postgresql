@@ -9,7 +9,7 @@ PostgreSQL functions for timestamps and next values.
 
 [PostgresSQL][pgxsqlpkg] provides the templated functions for query, exec, ping, and stat. Testing proxies are implemented for exec and query functions.
 The processing of host generated messaging for startup and ping events is also supported. Scanning of PostgreSQL rows into application types utilizes a
-templated interface, and corresponding templated Scan function. This implementation does not leak any PostgresSQL specific packages.
+templated interface, and corresponding templated Scan function. Care was taken to not leak any PostgresSQL specific packages.
 
 ~~~
 // Scanner - templated interface for scanning rows
