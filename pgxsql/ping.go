@@ -12,7 +12,7 @@ var (
 	pingLoc = pkgPath + "/stat"
 )
 
-// Ping - generic function for pinging the database cluster
+// Ping - templated function for pinging the database cluster
 func Ping[E template.ErrorHandler](ctx context.Context) (status *runtime.Status) {
 	var e E
 	var limited = false

@@ -13,7 +13,7 @@ var (
 	statLoc = pkgPath + "/stat"
 )
 
-// Stat - generic function for running a stat call
+// Stat - templated function for retrieving runtime stats
 func Stat[E template.ErrorHandler](ctx context.Context) (stat *pgxpool.Stat, status *runtime.Status) {
 	var e E
 	var limited = false
