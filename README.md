@@ -2,11 +2,11 @@
 
 ## pgxdml
 
-[pgxdml[pgxdmlpkg]
+[pgxdml][pgxdmlpkg]
 
 ## pgxsql
 
-[pgxsql[pgxsqlpkg]
+[pgxsql][pgxsqlpkg]
 
 
 [pgxdmlpkg]: <https://pkg.go.dev/github.com/idiomatic-go/postgresql/pgxdml/http>
