@@ -3,7 +3,7 @@
 ## pgxdml
 
 [PostgresDML][pgxdmlpkg] implements types that build SQL statements based on the configured attributes. Support is also available for selecting
-PostgreSQL functions for timestamps and next values.
+PostgreSQL functions for timestamps and next values when needed for statement creation.
 
 ## pgxsql
 
