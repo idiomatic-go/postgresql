@@ -4,12 +4,12 @@ import (
 	"errors"
 )
 
-// Scanner - generic interface for scanning a row set into a slice of types
+// Scanner - templated interface for scanning rows
 type Scanner[T any] interface {
 	Scan(columnNames []string, values []any) (T, error)
 }
 
-// Scan - scan rows into a slice
+// Scan - templated function for scanning rows
 func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 	if rows == nil {
 		return nil, errors.New("invalid request: rows interface is nil")
