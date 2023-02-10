@@ -3,7 +3,7 @@
 ## pgxdml
 
 [PostgresDML][pgxdmlpkg] implements types that build SQL statements based on the configured attributes. Support is also available for selecting
-PostgreSQL functions for timestamps and next values when needed for statement creation.
+PostgreSQL functions for timestamps and next values.
 
 ## pgxsql
 
@@ -23,7 +23,7 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 }
 ~~~
 
-Resiliency for PostgresSQL database client calls is provided by a configurable [Actuator][actuatorcall] function call initialized by the host on startup:
+Resiliency for PostgresSQL database client calls is provided by an [Actuator][actuatorcall] function call that is initialized by the host on startup:
 ~~~
 fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, runtime.ContextRequestId(ctx), "GET")
 defer fn()
