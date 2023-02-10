@@ -31,4 +31,4 @@ defer fn()
 
 [pgxdmlpkg]: <https://pkg.go.dev/github.com/idiomatic-go/postgresql/pgxdml/http>
 [pgxsqlpkg]: <https://pkg.go.dev/github.com/idiomatic-go/postgresql/pgxsql>
-[actuatorcall]: <https://pkg.go.dev/github.com/idiomatic-go/resiliency/actuatorr#EgressApply>
+[actuatorcall]: <https://pkg.go.dev/github.com/idiomatic-go/resiliency/actuator#EgressApply>
