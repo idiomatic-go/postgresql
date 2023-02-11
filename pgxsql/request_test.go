@@ -94,22 +94,22 @@ func ExampleBuildSql() {
 
 }
 
-func ExampleNewQueryRequestFromUrlBuildSql() {
+func ExampleNewQueryRequestFromValuesBuildSql() {
 	u, _ := url.Parse("https://www.google.com/search?location=texas&zone=plano")
 	rsc := "access-log"
 	t := "select * from access_log {where} order by start_time desc limit 2"
-	req := NewQueryRequestFromUrl(rsc, t, u)
+	req := NewQueryRequestFromValues(rsc, t, u.Query())
 
 	sql := req.BuildSql()
-	fmt.Printf("test: NewQueryRequestFromUrl(%v) -> %v\n", t, sql)
+	fmt.Printf("test: NewQueryRequestFromValues(%v) -> %v\n", t, sql)
 
-	req = NewQueryRequestFromUrl(rsc, t, nil)
+	req = NewQueryRequestFromValues(rsc, t, nil)
 	sql = req.BuildSql()
-	fmt.Printf("test: NewQueryRequestFromUrl(%v) -> %v\n", t, sql)
+	fmt.Printf("test: NewQueryRequestFromValues(%v) -> %v\n", t, sql)
 
 	//Output:
-	//test: NewQueryRequestFromUrl(select * from access_log {where} order by start_time desc limit 2) -> select * from access_log
+	//test: NewQueryRequestFromValues(select * from access_log {where} order by start_time desc limit 2) -> select * from access_log
 	//WHERE zone = 'plano' AND location = 'texas' order by start_time desc limit 2
-	//test: NewQueryRequestFromUrl(select * from access_log {where} order by start_time desc limit 2) -> select * from access_log order by start_time desc limit 2
+	//test: NewQueryRequestFromValues(select * from access_log {where} order by start_time desc limit 2) -> select * from access_log order by start_time desc limit 2
 
 }
