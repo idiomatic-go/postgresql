@@ -8,7 +8,7 @@ import (
 
 func ExampleBuildWhere() {
 	u, _ := url.Parse("http://www.google.com/search?loc=texas&zone=frisco")
-	where := BuildWhere(u)
+	where := BuildWhere(u.Query())
 	fmt.Printf("test: BuildWhere(u) -> %v\n", where)
 
 	//Output:

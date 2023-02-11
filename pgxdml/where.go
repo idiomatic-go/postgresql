@@ -2,16 +2,11 @@ package pgxdml
 
 import (
 	"errors"
-	"net/url"
 	"strings"
 )
 
 // BuildWhere - build the []Attr based on the URL query parameters
-func BuildWhere(url *url.URL) []Attr {
-	if url == nil {
-		return nil
-	}
-	values := url.Query()
+func BuildWhere(values map[string][]string) []Attr {
 	if len(values) == 0 {
 		return nil
 	}
