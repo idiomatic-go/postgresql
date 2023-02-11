@@ -1,6 +1,19 @@
 package pgxsql
 
-import "github.com/jackc/pgx/v5"
+import (
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+)
+
+// CommandTag - results from an Exec command
+type CommandTag struct {
+	Sql          string
+	RowsAffected int64
+	Insert       bool
+	Update       bool
+	Delete       bool
+	Select       bool
+}
 
 // FieldDescription - data for defining the returned Query fields/columns
 type FieldDescription struct {
@@ -116,4 +129,18 @@ func (r *proxyRows) RawValues() [][]byte {
 		return nil
 	}
 	return r.pgxRows.RawValues()
+}
+
+func createFieldDescriptions(fields []pgconn.FieldDescription) []FieldDescription {
+	var result []FieldDescription
+	for _, f := range fields {
+		result = append(result, FieldDescription{Name: f.Name,
+			TableOID:             f.TableOID,
+			TableAttributeNumber: f.TableAttributeNumber,
+			DataTypeOID:          f.DataTypeOID,
+			DataTypeSize:         f.DataTypeSize,
+			TypeModifier:         f.TypeModifier,
+			Format:               f.Format})
+	}
+	return result
 }

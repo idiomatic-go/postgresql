@@ -9,15 +9,6 @@ import (
 	"github.com/idiomatic-go/motif/template"
 )
 
-type CommandTag struct {
-	Sql          string
-	RowsAffected int64
-	Insert       bool
-	Update       bool
-	Delete       bool
-	Select       bool
-}
-
 const (
 	NullCount = int64(-1)
 )

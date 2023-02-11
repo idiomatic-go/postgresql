@@ -6,7 +6,6 @@ import (
 	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
 	"github.com/idiomatic-go/motif/template"
-	"github.com/jackc/pgx/v5/pgconn"
 )
 
 // Query - templated function for a Query
@@ -38,19 +37,5 @@ func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...a
 	if err != nil {
 		return nil, e.HandleWithContext(ctx, queryLoc, recast(err))
 	}
-	return &proxyRows{pgxRows: pgxRows, fd: fieldDescriptions(pgxRows.FieldDescriptions())}, runtime.NewStatusOK()
-}
-
-func fieldDescriptions(fields []pgconn.FieldDescription) []FieldDescription {
-	var result []FieldDescription
-	for _, f := range fields {
-		result = append(result, FieldDescription{Name: f.Name,
-			TableOID:             f.TableOID,
-			TableAttributeNumber: f.TableAttributeNumber,
-			DataTypeOID:          f.DataTypeOID,
-			DataTypeSize:         f.DataTypeSize,
-			TypeModifier:         f.TypeModifier,
-			Format:               f.Format})
-	}
-	return result
+	return &proxyRows{pgxRows: pgxRows, fd: createFieldDescriptions(pgxRows.FieldDescriptions())}, runtime.NewStatusOK()
 }
