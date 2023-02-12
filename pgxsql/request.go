@@ -62,7 +62,7 @@ func (r *Request) Validate() error {
 	if r.Template == "" {
 		return errors.New("invalid argument: request template is empty")
 	}
-	if r.cmd == deleteCmd {
+	/*if r.cmd == deleteCmd {
 		if len(r.Where) == 0 {
 			return errors.New("invalid argument: delete where clause is empty")
 		}
@@ -75,6 +75,7 @@ func (r *Request) Validate() error {
 			return errors.New("invalid argument: update where clause is empty")
 		}
 	}
+	*/
 	return nil
 }
 
@@ -83,27 +84,31 @@ func (r *Request) String() string {
 }
 
 func (r *Request) BuildSql() string {
-	var sql string
+	var sql = r.Template
 	var err error
 
 	switch r.cmd {
 	case selectCmd:
 		sql, err = pgxdml.ExpandSelect(r.Template, r.Where)
 	case insertCmd:
-		sql, err = pgxdml.WriteInsert(r.Template, r.Values)
+		if len(r.Values) > 0 {
+			sql, err = pgxdml.WriteInsert(r.Template, r.Values)
+		}
 	case updateCmd:
-		if len(r.Where) == 0 {
-			r.Where = append(r.Where, pgxdml.Attr{Name: "update_error_no_where_clause", Val: "null"})
+		//if len(r.Where) == 0 {
+		//	r.Where = append(r.Where, pgxdml.Attr{Name: "update_error_no_where_clause", Val: "null"})
+		//}
+		//if len(r.Attrs) == 0 {
+		//	r.Attrs = append(r.Attrs, pgxdml.Attr{Name: "update_error_no_set_clause", Val: "null"})
+		//}
+		if len(r.Where) > 0 && len(r.Attrs) > 0 {
+			sql, err = pgxdml.WriteUpdate(r.Template, r.Attrs, r.Where)
 		}
-		if len(r.Attrs) == 0 {
-			r.Attrs = append(r.Attrs, pgxdml.Attr{Name: "update_error_no_set_clause", Val: "null"})
-		}
-		sql, err = pgxdml.WriteUpdate(r.Template, r.Attrs, r.Where)
 	case deleteCmd:
-		if len(r.Where) == 0 {
-			r.Where = append(r.Where, pgxdml.Attr{Name: "delete_error_no_where_clause", Val: "null"})
+		if len(r.Where) > 0 {
+			//r.Where = append(r.Where, pgxdml.Attr{Name: "delete_error_no_where_clause", Val: "null"})
+			sql, err = pgxdml.WriteDelete(r.Template, r.Where)
 		}
-		sql, err = pgxdml.WriteDelete(r.Template, r.Where)
 	}
 	r.Error = err
 	return sql
