@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
 	"github.com/idiomatic-go/motif/template"
 )
@@ -19,7 +18,7 @@ var execLoc = pkgPath + "/exec"
 func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (_ CommandTag, status *runtime.Status) {
 	var e E
 	var limited = false
-	var fn messaging.ActuatorComplete
+	var fn func()
 
 	if ctx == nil {
 		ctx = context.Background()

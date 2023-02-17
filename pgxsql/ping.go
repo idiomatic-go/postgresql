@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
 	"github.com/idiomatic-go/motif/template"
 )
@@ -16,7 +15,7 @@ var (
 func Ping[E template.ErrorHandler](ctx context.Context) (status *runtime.Status) {
 	var e E
 	var limited = false
-	var fn messaging.ActuatorComplete
+	var fn func()
 
 	if ctx == nil {
 		ctx = context.Background()

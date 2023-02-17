@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
 	"github.com/idiomatic-go/motif/template"
 )
@@ -12,7 +11,7 @@ import (
 func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *runtime.Status) {
 	var e E
 	var limited = false
-	var fn messaging.ActuatorComplete
+	var fn func()
 
 	if ctx == nil {
 		ctx = context.Background()

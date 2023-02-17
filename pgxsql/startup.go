@@ -36,7 +36,7 @@ func resetStarted() {
 func complete() {}
 
 func init() {
-	actuatorApply = func(ctx context.Context, status **runtime.Status, uri, requestId, method string) (messaging.ActuatorComplete, context.Context, bool) {
+	actuatorApply = func(ctx context.Context, status **runtime.Status, uri, requestId, method string) (func(), context.Context, bool) {
 		return complete, ctx, false
 	}
 	messaging.RegisterResource(Uri, c)
