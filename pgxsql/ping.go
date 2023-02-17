@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
 	"github.com/idiomatic-go/motif/template"
 )
@@ -20,7 +21,7 @@ func Ping[E template.ErrorHandler](ctx context.Context) (status *runtime.Status)
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	fn, ctx, limited = actuatorApply(ctx, &status, PingUri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = actuatorApply(ctx, messaging.NewStatusCode(&status), PingUri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return runtime.NewStatusCode(runtime.StatusRateLimited)

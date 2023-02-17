@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
 	"github.com/idiomatic-go/motif/template"
 )
@@ -26,7 +27,7 @@ func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req
 	if req == nil {
 		return CommandTag{}, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = actuatorApply(ctx, messaging.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return CommandTag{}, runtime.NewStatusCode(runtime.StatusRateLimited)

@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"github.com/idiomatic-go/motif/messaging"
-	"github.com/idiomatic-go/motif/runtime"
 	"github.com/idiomatic-go/motif/template"
 	"reflect"
 	"sync/atomic"
@@ -33,11 +32,9 @@ func resetStarted() {
 	atomic.StoreInt64(&started, 0)
 }
 
-func complete() {}
-
 func init() {
-	actuatorApply = func(ctx context.Context, status **runtime.Status, uri, requestId, method string) (func(), context.Context, bool) {
-		return complete, ctx, false
+	actuatorApply = func(ctx context.Context, statusCode func() int, uri, requestId, method string) (func(), context.Context, bool) {
+		return func() {}, ctx, false
 	}
 	messaging.RegisterResource(Uri, c)
 	go receive()
