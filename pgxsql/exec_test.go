@@ -29,10 +29,10 @@ const (
 	execDeleteConditions = "DELETE FROM conditions"
 )
 
-func execTestProxy(req *Request) (CommandTag, error) {
+func execTestProxy(req *Request) (tag CommandTag, err error) {
 	switch req.Uri {
 	case BuildUpdateUri(execUpdateRsc):
-		return emptyCommandTag, errors.New("exec error")
+		return tag, errors.New("exec error")
 	case BuildInsertUri(execInsertRsc):
 		return CommandTag{
 			Sql:          "INSERT 1",
@@ -43,7 +43,7 @@ func execTestProxy(req *Request) (CommandTag, error) {
 			Select:       false,
 		}, nil
 	}
-	return emptyCommandTag, nil
+	return tag, nil
 }
 
 func ExampleExecProxy() {

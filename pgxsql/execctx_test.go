@@ -13,10 +13,10 @@ const (
 	execTestInsertRsc = "insert"
 )
 
-func execCtxProxy(req *Request) (CommandTag, error) {
+func execCtxProxy(req *Request) (tag CommandTag, err error) {
 	switch req.Uri {
 	case BuildUpdateUri(execTestUpdateRsc):
-		return emptyCommandTag, errors.New("exec error")
+		return tag, errors.New("exec error")
 	case BuildInsertUri(execTestInsertRsc):
 		return CommandTag{
 			Sql:          "INSERT 1",
@@ -27,7 +27,7 @@ func execCtxProxy(req *Request) (CommandTag, error) {
 			Select:       false,
 		}, nil
 	}
-	return emptyCommandTag, nil
+	return tag, nil
 }
 
 func ExampleContextExec_Error() {

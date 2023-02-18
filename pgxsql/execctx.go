@@ -7,8 +7,7 @@ import (
 )
 
 var (
-	execContextKey  = &contextKey{"pgxsql-exec"}
-	emptyCommandTag = CommandTag{}
+	execContextKey = &contextKey{"pgxsql-exec"}
 )
 
 // ExecProxy - proxy type for the Exec function
@@ -26,18 +25,18 @@ func ContextWithExec(ctx context.Context, fn ExecProxy) context.Context {
 }
 
 // ContextExec - calls the Exec proxy
-func ContextExec(ctx context.Context, req *Request) (CommandTag, error) {
+func ContextExec(ctx context.Context, req *Request) (tag CommandTag, err error) {
 	if ctx == nil {
-		return emptyCommandTag, errors.New("context is nil")
+		return tag, errors.New("context is nil")
 	}
 	i := ctx.Value(queryContextKey)
 	if i == nil {
-		return emptyCommandTag, errors.New("context value nil")
+		return tag, errors.New("context value nil")
 	}
 	if exec, ok := i.(ExecProxy); ok && exec != nil {
 		return exec(req)
 	}
-	return CommandTag{}, errors.New("context value is not of type ExecProxy")
+	return tag, errors.New("context value is not of type ExecProxy")
 }
 
 // IsContextExec - determines if the context is an Exec proxy context
