@@ -2,19 +2,21 @@ package pgxsql
 
 import (
 	"errors"
+	"fmt"
 	"github.com/idiomatic-go/postgresql/pgxdml"
 )
 
 const (
-	UrnNID    = "urn:postgres"
-	QueryNSS  = UrnNID + ":" + "query."
-	InsertNSS = UrnNID + ":" + "insert."
-	UpdateNSS = UrnNID + ":" + "update."
-	DeleteNSS = UrnNID + ":" + "delete."
+	PostgresNID = "postgres"
+	QueryNSS    = "query"
+	InsertNSS   = "insert"
+	UpdateNSS   = "update"
+	DeleteNSS   = "delete"
+	PingNSS     = "ping"
+	StatNSS     = "stat"
 
-	PingUri  = UrnNID + ":" + PingPath
-	PingPath = "ping"
-	StatUri  = UrnNID + ":" + "stat"
+	PingUri = "urn:" + PostgresNID + ":" + PingNSS
+	StatUri = "urn:" + PostgresNID + ":" + StatNSS
 
 	selectCmd = 0
 	insertCmd = 1
@@ -24,24 +26,28 @@ const (
 	variableReference = "$1"
 )
 
+func buildUri(nsid, nss, resource string) string {
+	return fmt.Sprintf("urn:%v:%v.%v", nsid, nss, resource)
+}
+
 // BuildQueryUri - build an uri with the Query NSS
 func BuildQueryUri(resource string) string {
-	return QueryNSS + resource
+	return buildUri(PostgresNID, QueryNSS, resource)
 }
 
 // BuildInsertUri - build an uri with the Insert NSS
 func BuildInsertUri(resource string) string {
-	return InsertNSS + resource
+	return buildUri(PostgresNID, InsertNSS, resource)
 }
 
 // BuildUpdateUri - build an uri with the Update NSS
 func BuildUpdateUri(resource string) string {
-	return UpdateNSS + resource
+	return buildUri(PostgresNID, UpdateNSS, resource)
 }
 
 // BuildDeleteUri - build an uri with the Delete NSS
 func BuildDeleteUri(resource string) string {
-	return DeleteNSS + resource
+	return buildUri(PostgresNID, DeleteNSS, resource)
 }
 
 // Request - contains data needed to build the SQL statement related to the uri
