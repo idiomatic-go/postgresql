@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/template"
+	"time"
 )
 
 // "postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
@@ -43,17 +44,16 @@ func testStartup() error {
 	if IsStarted() {
 		return nil
 	}
-	/*
-		c <- messaging.Message{
-			To:      "",
-			From:    "",
-			Event:   messaging.StartupEvent,
-			Status:  nil,
-			Content: []any{messaging.DatabaseUrl{Url: serviceUrl}, messaging.ActuatorApply(actuator.EgressApply)},
-			ReplyTo: nil,
-		}
-		time.Sleep(time.Second * 3)
 
-	*/
+	c <- messaging.Message{
+		To:      "",
+		From:    "",
+		Event:   messaging.StartupEvent,
+		Status:  nil,
+		Content: []any{messaging.DatabaseUrl{Url: serviceUrl}}, //messaging.ActuatorApply(actuator.EgressApply)},
+		ReplyTo: nil,
+	}
+	time.Sleep(time.Second * 3)
+
 	return nil
 }

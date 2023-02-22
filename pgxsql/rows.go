@@ -3,7 +3,11 @@ package pgxsql
 import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+// Stats - pool statistics
+type Stats = pgxpool.Stat
 
 // CommandTag - results from an Exec command
 type CommandTag struct {

@@ -6,7 +6,6 @@ import (
 	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
 	"github.com/idiomatic-go/motif/template"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -14,7 +13,7 @@ var (
 )
 
 // Stat - templated function for retrieving runtime stats
-func Stat[E template.ErrorHandler](ctx context.Context) (stat *pgxpool.Stat, status *runtime.Status) {
+func Stat[E template.ErrorHandler](ctx context.Context) (stat *Stats, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()
