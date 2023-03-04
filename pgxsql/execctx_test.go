@@ -14,18 +14,6 @@ const (
 	execTestInsertRsc = "insert"
 )
 
-func testExec(req *Request) (CommandTag, error) {
-	fmt.Printf("test: testDo() -> \n")
-	return CommandTag{
-		Sql:          "insert",
-		RowsAffected: 1,
-		Insert:       true,
-		Update:       false,
-		Delete:       false,
-		Select:       false,
-	}, nil
-}
-
 var execCtxExchange = NewExecExchange(execCtxProxy)
 
 func execCtxProxy(req *Request) (tag CommandTag, err error) {
@@ -73,8 +61,7 @@ func ExampleExecContext() {
 	v1 := "value 1"
 	v2 := "value 2"
 
-	do1 := NewExecExchange(testExec)
-	ctx := NewExecContext(nil, do1)
+	ctx := NewExecContext(nil, execCtxExchange)
 
 	fmt.Printf("test: IsExecContext(ctx) -> %v\n", IsExecContext(ctx))
 	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx.Value(k1), ctx.Value(k2))

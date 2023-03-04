@@ -26,11 +26,6 @@ func queryCtxProxy(req *Request) (Rows, error) {
 	return nil, nil
 }
 
-func testQuery(req *Request) (Rows, error) {
-	fmt.Printf("test: testQuery() -> \n")
-	return nil, nil
-}
-
 func ExampleQueryContext_Error() {
 	ctx := NewQueryContext(nil, queryCtxExchange)
 	req := NewQueryRequest(queryTestErrorRsc, queryTestErrorSql, nil)
@@ -60,8 +55,7 @@ func ExampleQueryContext() {
 	v1 := "value 1"
 	v2 := "value 2"
 
-	do1 := NewQueryExchange(testQuery)
-	ctx := NewQueryContext(nil, do1)
+	ctx := NewQueryContext(nil, queryCtxExchange)
 
 	fmt.Printf("test: IsQueryContext(ctx) -> %v\n", IsQueryContext(ctx))
 	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx.Value(k1), ctx.Value(k2))
