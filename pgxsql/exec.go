@@ -32,8 +32,8 @@ func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req
 	if limited {
 		return tag, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
-	if IsContextExec(ctx) {
-		result, err := ContextExec(ctx, req)
+	if exec, ok := execExchangeCast(ctx); ok {
+		result, err := exec.Exec(req)
 		return result, e.HandleWithContext(ctx, execLoc, err)
 	}
 	if dbClient == nil {

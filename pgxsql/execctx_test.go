@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/idiomatic-go/motif/template"
 )
 
 const (
@@ -12,6 +13,8 @@ const (
 	execTestUpdateRsc = "update"
 	execTestInsertRsc = "insert"
 )
+
+var execCtxExchange = NewExecExchange(execCtxProxy)
 
 func execCtxProxy(req *Request) (tag CommandTag, err error) {
 	switch req.Uri {
@@ -30,22 +33,24 @@ func execCtxProxy(req *Request) (tag CommandTag, err error) {
 	return tag, nil
 }
 
-func ExampleContextExec_Error() {
-	ctx := ContextWithExec(context.Background(), execCtxProxy)
-	tag, err := ContextExec(ctx, NewUpdateRequest(execTestUpdateRsc, execTestUpdateSql, nil, nil))
-	fmt.Printf("test: ExecQuery() : [tags:%v] [error:%v]\n", tag, err)
+func ExampleExecContext_Error() {
+	req := NewUpdateRequest(execTestUpdateRsc, execTestUpdateSql, nil, nil)
+	tag, err := Exec[template.DebugError](context.Background(), NullCount, req)
+	fmt.Printf("test: Exec[DebugError](ctx,NullCount,update) : [tag:%v] [error:%v]\n", tag, err)
 
 	//Output:
-	//test: ExecQuery() : [tags:{ 0 false false false false}] [error:exec error]
+	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [error on PostgreSQL exec call : dbClient is nil]]
+	//test: Exec[DebugError](ctx,NullCount,update) : [tag:{ 0 false false false false}] [error:InvalidArgument]
 
 }
 
-func ExampleContextExec_Rows() {
-	ctx := ContextWithExec(context.Background(), execCtxProxy)
-	tag, err := ContextExec(ctx, NewInsertRequest(execTestInsertRsc, execTestInsertSql, nil))
-	fmt.Printf("test: ContextExec() : [tag:%v] [error:%v]\n", tag, err)
+func ExampleExecContext_Insert() {
+	ctx := NewExecContext(nil, execCtxExchange)
+	req := NewInsertRequest(execTestInsertRsc, execTestInsertSql, nil)
+	tag, err := Exec[template.DebugError](ctx, NullCount, req)
+	fmt.Printf("test: Exec[DebugError](ctx,NullCount,insert) : [tag:%v] [error:%v]\n", tag, err)
 
 	//Output:
-	//test: ContextExec() : [tag:{INSERT 1 1234 true false false false}] [error:<nil>]
+	//test: Exec[DebugError](ctx,NullCount,insert) : [tag:{INSERT 1 1234 true false false false}] [error:OK]
 
 }

@@ -29,6 +29,8 @@ const (
 	execDeleteConditions = "DELETE FROM conditions"
 )
 
+var execTestExchange = NewExecExchange(execTestProxy)
+
 func execTestProxy(req *Request) (tag CommandTag, err error) {
 	switch req.Uri {
 	case BuildUpdateUri(execUpdateRsc):
@@ -47,18 +49,18 @@ func execTestProxy(req *Request) (tag CommandTag, err error) {
 }
 
 func ExampleExecProxy() {
-	ctx := ContextWithExec(context.Background(), execTestProxy)
+	ctx := NewExecContext(context.Background(), execTestExchange)
 
 	cmd, status := Exec[template.DebugError](ctx, NullCount, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
-	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execUpdateSql, status, cmd)
+	fmt.Printf("test: Exec[DebugError](%v) -> %v [cmd:%v]\n", execUpdateSql, status, cmd)
 
 	cmd, status = Exec[template.DebugError](ctx, NullCount, NewInsertRequest(execInsertRsc, execInsertSql, nil))
-	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
+	fmt.Printf("test: Exec[DebugError](%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
 
 	//Output:
 	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [exec error]]
-	//test: Exec(update test) -> Internal [cmd:{ 0 false false false false}]
-	//test: Exec(insert test) -> OK [cmd:{INSERT 1 1234 true false false false}]
+	//test: Exec[DebugError](update test) -> Internal [cmd:{ 0 false false false false}]
+	//test: Exec[DebugError](insert test) -> OK [cmd:{INSERT 1 1234 true false false false}]
 
 }
 
