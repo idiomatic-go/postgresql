@@ -1,7 +1,6 @@
 package pgxsql
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"github.com/idiomatic-go/motif/runtime"
@@ -42,6 +41,8 @@ const (
 	queryRowsRsc         = "rows"
 )
 
+var queryTestExchange = NewQueryExchange(queryTestProxy)
+
 func queryTestProxy(req *Request) (Rows, error) {
 	switch req.Uri {
 	case BuildQueryUri(queryErrorRsc):
@@ -53,10 +54,9 @@ func queryTestProxy(req *Request) (Rows, error) {
 	return nil, nil
 }
 
-var qCtx = ContextWithQuery(context.Background(), queryTestProxy)
-
 func ExampleQuery_TestError() {
-	result, status := Query[template.DebugError](qCtx, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
+	ctx := NewQueryContext(nil, queryCtxExchange)
+	result, status := Query[template.DebugError](ctx, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
 	fmt.Printf("test: Query[template.DebugError](ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
@@ -66,7 +66,8 @@ func ExampleQuery_TestError() {
 }
 
 func ExampleQuery_TestRows() {
-	result, status := Query[template.DebugError](qCtx, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
+	ctx := NewQueryContext(nil, queryCtxExchange)
+	result, status := Query[template.DebugError](ctx, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
 	fmt.Printf("test: Query[template.DebugError](ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, result.CommandTag())
 
 	//Output:

@@ -2,81 +2,65 @@ package pgxsql
 
 import (
 	"context"
-	"errors"
 	"time"
 )
 
-var (
-	queryContextKey = &contextKey{"pgxsql-query"}
-)
-
-type contextKey struct {
-	name string
+type QueryContext interface {
+	context.Context
+	QueryExchange
+	withValue(key, val any) context.Context
 }
 
-func (k *contextKey) String() string { return "context value " + k.name }
+type queryContext struct {
+	ctx      context.Context
+	exchange QueryExchange
+}
 
-// QueryProxy - proxy type for the Query function
-type QueryProxy func(req *Request) (Rows, error)
-
-// ContextWithQuery - creates a new Context with a Query proxy
-func ContextWithQuery(ctx context.Context, fn QueryProxy) context.Context {
+func NewQueryContext(ctx context.Context, query QueryExchange) context.Context {
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	if fn == nil {
-		return ctx
-	}
-	return &queryCtx{ctx, queryContextKey, fn}
+	return &queryContext{ctx: ctx, exchange: query}
 }
 
-// ContextQuery - calls the Query proxy
-func ContextQuery(ctx context.Context, req *Request) (Rows, error) {
+func (c *queryContext) Deadline() (deadline time.Time, ok bool) {
+	return c.ctx.Deadline()
+}
+
+func (c *queryContext) Done() <-chan struct{} {
+	return c.ctx.Done()
+}
+
+func (c *queryContext) Err() error {
+	return c.ctx.Err()
+}
+
+func (c *queryContext) Value(key any) any {
+	return c.ctx.Value(key)
+}
+
+func (c *queryContext) Query(req *Request) (Rows, error) {
+	return c.exchange.Query(req)
+}
+
+func (c *queryContext) withValue(key, val any) context.Context {
+	c.ctx = context.WithValue(c.ctx, key, val)
+	return c
+}
+
+func QueryContextWithValue(ctx context.Context, key any, val any) context.Context {
 	if ctx == nil {
-		return nil, errors.New("context is nil")
+		return nil
 	}
-	i := ctx.Value(queryContextKey)
-	if i == nil {
-		return nil, errors.New("context value is nil")
+	if curr, ok := any(ctx).(QueryContext); ok {
+		return curr.withValue(key, val)
 	}
-	if query, ok := i.(QueryProxy); ok && query != nil {
-		return query(req)
+	return ctx
+}
+
+func IsQueryContext(ctx context.Context) bool {
+	if _, ok := any(ctx).(QueryContext); ok {
+		return true
 	}
-	return nil, errors.New("context value is not of QueryProxy type")
-}
-
-// IsContextQuery - determines if the context is a Query proxy context
-func IsContextQuery(c context.Context) bool {
-	if c == nil {
-		return false
-	}
-	for {
-		switch c.(type) {
-		case *queryCtx:
-			return true
-		default:
-			return false
-		}
-	}
-}
-
-type queryCtx struct {
-	ctx      context.Context
-	key, val any
-}
-
-func (*queryCtx) Deadline() (deadline time.Time, ok bool) {
-	return
-}
-
-func (*queryCtx) Done() <-chan struct{} {
-	return nil
-}
-
-func (*queryCtx) Err() error {
-	return nil
-}
-
-func (v *queryCtx) Value(key any) any {
-	return v.val
+	return false
 }

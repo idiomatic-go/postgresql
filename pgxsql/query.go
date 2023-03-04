@@ -25,9 +25,9 @@ func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...a
 	if limited {
 		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
-	if IsContextQuery(ctx) {
+	if q, ok := queryExchangeCast(ctx); ok {
 		var err error
-		result, err = ContextQuery(ctx, req)
+		result, err = q.Query(req)
 		return result, e.HandleWithContext(ctx, execLoc, err)
 	}
 	if dbClient == nil {

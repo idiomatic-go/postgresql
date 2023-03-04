@@ -14,6 +14,18 @@ const (
 	execTestInsertRsc = "insert"
 )
 
+func testExec(req *Request) (CommandTag, error) {
+	fmt.Printf("test: testDo() -> \n")
+	return CommandTag{
+		Sql:          "insert",
+		RowsAffected: 1,
+		Insert:       true,
+		Update:       false,
+		Delete:       false,
+		Select:       false,
+	}, nil
+}
+
 var execCtxExchange = NewExecExchange(execCtxProxy)
 
 func execCtxProxy(req *Request) (tag CommandTag, err error) {
@@ -52,5 +64,35 @@ func ExampleExecContext_Insert() {
 
 	//Output:
 	//test: Exec[DebugError](ctx,NullCount,insert) : [tag:{INSERT 1 1234 true false false false}] [error:OK]
+
+}
+
+func ExampleExecContext() {
+	k1 := "1"
+	k2 := "2"
+	v1 := "value 1"
+	v2 := "value 2"
+
+	do1 := NewExecExchange(testExec)
+	ctx := NewExecContext(nil, do1)
+
+	fmt.Printf("test: IsExecContext(ctx) -> %v\n", IsExecContext(ctx))
+	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx.Value(k1), ctx.Value(k2))
+
+	ctx1 := ExecContextWithValue(ctx, k1, v1)
+	fmt.Printf("test: IsExecContext(ctx1) -> %v\n", IsExecContext(ctx1))
+	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx1.Value(k1), ctx1.Value(k2))
+
+	ctx2 := ExecContextWithValue(ctx, k2, v2)
+	fmt.Printf("test: IsExecContext(ctx2) -> %v\n", IsExecContext(ctx2))
+	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx2.Value(k1), ctx2.Value(k2))
+
+	//Output:
+	//test: IsExecContext(ctx) -> true
+	//test: Values() -> [key1:<nil>] [key2:<nil>]
+	//test: IsExecContext(ctx1) -> true
+	//test: Values() -> [key1:value 1] [key2:<nil>]
+	//test: IsExecContext(ctx2) -> true
+	//test: Values() -> [key1:value 1] [key2:value 2]
 
 }
