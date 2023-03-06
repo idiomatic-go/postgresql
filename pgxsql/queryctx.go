@@ -5,22 +5,25 @@ import (
 	"time"
 )
 
-type QueryContext interface {
-	context.Context
-	QueryExchange
-	withValue(key, val any) context.Context
+// QueryExchange - interface for query
+type QueryExchange interface {
+	Query(req *Request) (Rows, error)
+}
+
+type queryWithValue interface {
+	queryWithValue(key, val any) context.Context
 }
 
 type queryContext struct {
-	ctx      context.Context
-	exchange QueryExchange
+	ctx   context.Context
+	query func(req *Request) (Rows, error)
 }
 
-func NewQueryContext(ctx context.Context, query QueryExchange) context.Context {
+func ContextWithQuery(ctx context.Context, query func(req *Request) (Rows, error)) context.Context {
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	return &queryContext{ctx: ctx, exchange: query}
+	return &queryContext{ctx: ctx, query: query}
 }
 
 func (c *queryContext) Deadline() (deadline time.Time, ok bool) {
@@ -40,27 +43,20 @@ func (c *queryContext) Value(key any) any {
 }
 
 func (c *queryContext) Query(req *Request) (Rows, error) {
-	return c.exchange.Query(req)
+	return c.query(req)
 }
 
-func (c *queryContext) withValue(key, val any) context.Context {
+func (c *queryContext) queryWithValue(key, val any) context.Context {
 	c.ctx = context.WithValue(c.ctx, key, val)
 	return c
 }
 
-func QueryContextWithValue(ctx context.Context, key any, val any) context.Context {
+func queryExchangeCast(ctx context.Context) (QueryExchange, bool) {
 	if ctx == nil {
-		return nil
+		return nil, false
 	}
-	if curr, ok := any(ctx).(QueryContext); ok {
-		return curr.withValue(key, val)
+	if e, ok := any(ctx).(QueryExchange); ok {
+		return e, true
 	}
-	return ctx
-}
-
-func IsQueryContext(ctx context.Context) bool {
-	if _, ok := any(ctx).(QueryContext); ok {
-		return true
-	}
-	return false
+	return nil, false
 }

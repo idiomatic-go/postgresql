@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
-	"github.com/idiomatic-go/motif/template"
 )
 
 var (
@@ -13,7 +12,7 @@ var (
 )
 
 // Ping - templated function for pinging the database cluster
-func Ping[E template.ErrorHandler](ctx context.Context) (status *runtime.Status) {
+func Ping[E runtime.ErrorHandler](ctx context.Context) (status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()

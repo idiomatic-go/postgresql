@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"github.com/idiomatic-go/motif/messaging"
-	"github.com/idiomatic-go/motif/template"
+	"github.com/idiomatic-go/motif/runtime"
 	"reflect"
 	"sync/atomic"
 	"time"
@@ -54,7 +54,7 @@ var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
 		ClientShutdown()
 	case messaging.PingEvent:
 		start := time.Now()
-		messaging.ReplyTo(msg, Ping[template.LogError](nil).SetDuration(time.Since(start)))
+		messaging.ReplyTo(msg, Ping[runtime.LogError](nil).SetDuration(time.Since(start)))
 	}
 }
 

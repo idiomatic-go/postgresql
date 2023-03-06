@@ -2,7 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/idiomatic-go/motif/template"
+	"github.com/idiomatic-go/motif/runtime"
 )
 
 func ExampleStat() {
@@ -13,7 +13,7 @@ func ExampleStat() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
 
-		stat, status := Stat[template.DebugError](nil)
+		stat, status := Stat[runtime.DebugError](nil)
 		fmt.Printf("test: Stat(nil) -> [status:%v] [stat:%v]\n", status, stat != nil)
 	}
 

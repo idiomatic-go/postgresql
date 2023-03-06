@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
-	"github.com/idiomatic-go/motif/template"
 )
 
 var (
@@ -13,7 +12,7 @@ var (
 )
 
 // Stat - templated function for retrieving runtime stats
-func Stat[E template.ErrorHandler](ctx context.Context) (stat *Stats, status *runtime.Status) {
+func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/idiomatic-go/motif/template"
+	"github.com/idiomatic-go/motif/runtime"
 )
 
 const (
@@ -14,7 +14,14 @@ const (
 	execTestInsertRsc = "insert"
 )
 
-var execCtxExchange = NewExecExchange(execCtxProxy)
+func isExecContext(ctx context.Context) bool {
+	if _, ok := any(ctx).(execWithValue); ok {
+		return true
+	}
+	return false
+}
+
+var execCtxExchange = ContextWithExec(nil, execCtxProxy)
 
 func execCtxProxy(req *Request) (tag CommandTag, err error) {
 	switch req.Uri {
@@ -35,7 +42,7 @@ func execCtxProxy(req *Request) (tag CommandTag, err error) {
 
 func ExampleExecContext_Error() {
 	req := NewUpdateRequest(execTestUpdateRsc, execTestUpdateSql, nil, nil)
-	tag, err := Exec[template.DebugError](context.Background(), NullCount, req)
+	tag, err := Exec[runtime.DebugError](context.Background(), NullCount, req)
 	fmt.Printf("test: Exec[DebugError](ctx,NullCount,update) : [tag:%v] [error:%v]\n", tag, err)
 
 	//Output:
@@ -45,9 +52,9 @@ func ExampleExecContext_Error() {
 }
 
 func ExampleExecContext_Insert() {
-	ctx := NewExecContext(nil, execCtxExchange)
+	//ctx := NewExecContext(nil, execCtxExchange)
 	req := NewInsertRequest(execTestInsertRsc, execTestInsertSql, nil)
-	tag, err := Exec[template.DebugError](ctx, NullCount, req)
+	tag, err := Exec[runtime.DebugError](execCtxExchange, NullCount, req)
 	fmt.Printf("test: Exec[DebugError](ctx,NullCount,insert) : [tag:%v] [error:%v]\n", tag, err)
 
 	//Output:
@@ -61,17 +68,17 @@ func ExampleExecContext() {
 	v1 := "value 1"
 	v2 := "value 2"
 
-	ctx := NewExecContext(nil, execCtxExchange)
+	ctx := execCtxExchange
 
-	fmt.Printf("test: IsExecContext(ctx) -> %v\n", IsExecContext(ctx))
+	fmt.Printf("test: IsExecContext(ctx) -> %v\n", isExecContext(ctx))
 	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx.Value(k1), ctx.Value(k2))
 
-	ctx1 := ExecContextWithValue(ctx, k1, v1)
-	fmt.Printf("test: IsExecContext(ctx1) -> %v\n", IsExecContext(ctx1))
+	ctx1 := ContextWithValue(ctx, k1, v1)
+	fmt.Printf("test: IsExecContext(ctx1) -> %v\n", isExecContext(ctx1))
 	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx1.Value(k1), ctx1.Value(k2))
 
-	ctx2 := ExecContextWithValue(ctx, k2, v2)
-	fmt.Printf("test: IsExecContext(ctx2) -> %v\n", IsExecContext(ctx2))
+	ctx2 := ContextWithValue(ctx, k2, v2)
+	fmt.Printf("test: IsExecContext(ctx2) -> %v\n", isExecContext(ctx2))
 	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx2.Value(k1), ctx2.Value(k2))
 
 	//Output:

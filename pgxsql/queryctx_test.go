@@ -1,9 +1,10 @@
 package pgxsql
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"github.com/idiomatic-go/motif/template"
+	"github.com/idiomatic-go/motif/runtime"
 )
 
 const (
@@ -13,7 +14,14 @@ const (
 	queryTestRowsRsc  = "rows"
 )
 
-var queryCtxExchange = NewQueryExchange(queryCtxProxy)
+func isQueryContext(ctx context.Context) bool {
+	if _, ok := any(ctx).(queryWithValue); ok {
+		return true
+	}
+	return false
+}
+
+var queryCtxExchange = ContextWithQuery(nil, queryCtxProxy)
 
 func queryCtxProxy(req *Request) (Rows, error) {
 	switch req.Uri {
@@ -27,9 +35,9 @@ func queryCtxProxy(req *Request) (Rows, error) {
 }
 
 func ExampleQueryContext_Error() {
-	ctx := NewQueryContext(nil, queryCtxExchange)
+	ctx := queryCtxExchange
 	req := NewQueryRequest(queryTestErrorRsc, queryTestErrorSql, nil)
-	rows, status := Query[template.DebugError](ctx, req)
+	rows, status := Query[runtime.DebugError](ctx, req)
 	fmt.Printf("test: Query[DebugError](ctx,req) : [rows:%v] [status:%v]\n", rows != nil, status)
 
 	//Output:
@@ -39,9 +47,9 @@ func ExampleQueryContext_Error() {
 }
 
 func ExampleQueryContext_Rows() {
-	ctx := NewQueryContext(nil, queryCtxExchange)
+	ctx := queryCtxExchange
 	req := NewQueryRequest(queryTestRowsRsc, queryTestRowsSql, nil)
-	rows, status := Query[template.DebugError](ctx, req)
+	rows, status := Query[runtime.DebugError](ctx, req)
 	fmt.Printf("test: Query[DebugError](ctx,req) : [rows:%v] [status:%v]\n", rows != nil, status)
 
 	//Output:
@@ -55,17 +63,17 @@ func ExampleQueryContext() {
 	v1 := "value 1"
 	v2 := "value 2"
 
-	ctx := NewQueryContext(nil, queryCtxExchange)
+	ctx := queryCtxExchange
 
-	fmt.Printf("test: IsQueryContext(ctx) -> %v\n", IsQueryContext(ctx))
+	fmt.Printf("test: IsQueryContext(ctx) -> %v\n", isQueryContext(ctx))
 	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx.Value(k1), ctx.Value(k2))
 
-	ctx1 := QueryContextWithValue(ctx, k1, v1)
-	fmt.Printf("test: IsQueryContext(ctx1) -> %v\n", IsQueryContext(ctx1))
+	ctx1 := ContextWithValue(ctx, k1, v1)
+	fmt.Printf("test: IsQueryContext(ctx1) -> %v\n", isQueryContext(ctx1))
 	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx1.Value(k1), ctx1.Value(k2))
 
-	ctx2 := QueryContextWithValue(ctx, k2, v2)
-	fmt.Printf("test: IsQueryContext(ctx2) -> %v\n", IsQueryContext(ctx2))
+	ctx2 := ContextWithValue(ctx, k2, v2)
+	fmt.Printf("test: IsQueryContext(ctx2) -> %v\n", isQueryContext(ctx2))
 	fmt.Printf("test: Values() -> [key1:%v] [key2:%v]\n", ctx2.Value(k1), ctx2.Value(k2))
 
 	//Output:

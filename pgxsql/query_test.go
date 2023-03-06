@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/idiomatic-go/motif/runtime"
-	"github.com/idiomatic-go/motif/template"
 	"github.com/idiomatic-go/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5/pgtype"
 	"time"
@@ -41,7 +40,7 @@ const (
 	queryRowsRsc         = "rows"
 )
 
-var queryTestExchange = NewQueryExchange(queryTestProxy)
+var queryTestExchange = ContextWithQuery(nil, queryTestProxy)
 
 func queryTestProxy(req *Request) (Rows, error) {
 	switch req.Uri {
@@ -55,23 +54,23 @@ func queryTestProxy(req *Request) (Rows, error) {
 }
 
 func ExampleQuery_TestError() {
-	ctx := NewQueryContext(nil, queryCtxExchange)
-	result, status := Query[template.DebugError](ctx, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
-	fmt.Printf("test: Query[template.DebugError](ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
+	ctx := queryTestExchange
+	result, status := Query[runtime.DebugError](ctx, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
+	fmt.Printf("test: Query[runtime.DebugError](ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
 	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [pgxsql query error]]
-	//test: Query[template.DebugError](ctx,select * from test) -> [rows:<nil>] [status:Internal]
+	//test: Query[runtime.DebugError](ctx,select * from test) -> [rows:<nil>] [status:Internal]
 
 }
 
 func ExampleQuery_TestRows() {
-	ctx := NewQueryContext(nil, queryCtxExchange)
-	result, status := Query[template.DebugError](ctx, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
-	fmt.Printf("test: Query[template.DebugError](ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, result.CommandTag())
+	ctx := queryTestExchange
+	result, status := Query[runtime.DebugError](ctx, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
+	fmt.Printf("test: Query[runtime.DebugError](ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, result.CommandTag())
 
 	//Output:
-	//test: Query[template.DebugError](ctx,select * from table) -> [rows:&{}] [status:OK] [cmd:{select * 1 false false false true}]
+	//test: Query[runtime.DebugError](ctx,select * from table) -> [rows:&{}] [status:OK] [cmd:{select * 1 false false false true}]
 
 }
 
@@ -82,11 +81,11 @@ func ExampleQuery_Conditions_Error() {
 	} else {
 		defer ClientShutdown()
 		req := NewQueryRequest(queryRowsRsc, queryConditionsError, nil)
-		results, status := Query[template.DebugError](nil, req)
+		results, status := Query[runtime.DebugError](nil, req)
 		if !status.OK() {
-			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v]\n", queryConditionsError, status)
+			fmt.Printf("test: Query[runtime.DebugError](nil,%v) -> [status:%v]\n", queryConditionsError, status)
 		} else {
-			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
+			fmt.Printf("test: Query[runtime.DebugError](nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
 			conditions, status1 := processResults(results, "")
 			fmt.Printf("test: processResults(results) -> [status:%v] [rows:%v]\n", status1, conditions)
 		}
@@ -94,7 +93,7 @@ func ExampleQuery_Conditions_Error() {
 
 	//Output:
 	//[[] github.com/idiomatic-go/postgresql/pgxsql/query [serverity:ERROR, code:42703, message:column "test" does not exist, position:8, SQLState:42703]]
-	//test: Query[template.DebugError](nil,select test,test2 from conditions) -> [status:Internal]
+	//test: Query[runtime.DebugError](nil,select test,test2 from conditions) -> [status:Internal]
 
 }
 
@@ -105,18 +104,18 @@ func ExampleQuery_Conditions() {
 	} else {
 		defer ClientShutdown()
 		req := NewQueryRequest(queryRowsRsc, queryConditions, nil)
-		results, status := Query[template.DebugError](nil, req)
+		results, status := Query[runtime.DebugError](nil, req)
 		if !status.OK() {
-			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v]\n", queryConditions, status)
+			fmt.Printf("test: Query[runtime.DebugError](nil,%v) -> [status:%v]\n", queryConditions, status)
 		} else {
-			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
+			fmt.Printf("test: Query[runtime.DebugError](nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
 			conditions, status1 := processResults(results, "")
 			fmt.Printf("test: processResults(results) -> [status:%v] [rows:%v]\n", status1, conditions)
 		}
 	}
 
 	//Output:
-	//test: Query[template.DebugError](nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
+	//test: Query[runtime.DebugError](nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
 	//test: processResults(results) -> [status:OK] [rows:[{2023-01-26 12:09:12.426535 -0600 CST office 70} {2023-01-26 12:09:12.426535 -0600 CST basement 66.5} {2023-01-26 12:09:12.426535 -0600 CST garage 45.1234}]]
 
 }
@@ -130,18 +129,18 @@ func ExampleQuery_Conditions_Where() {
 
 		where := []pgxdml.Attr{{"location", "garage"}}
 		req := NewQueryRequest(queryRowsRsc, queryConditionsWhere, where)
-		results, status := Query[template.DebugError](nil, req)
+		results, status := Query[runtime.DebugError](nil, req)
 		if !status.OK() {
-			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v]\n", queryConditionsWhere, status)
+			fmt.Printf("test: Query[runtime.DebugError](nil,%v) -> [status:%v]\n", queryConditionsWhere, status)
 		} else {
-			fmt.Printf("test: Query[template.DebugError](nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
+			fmt.Printf("test: Query[runtime.DebugError](nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
 			conditions, status1 := processResults(results, "")
 			fmt.Printf("test: processResults(results) -> [status:%v] [rows:%v]\n", status1, conditions)
 		}
 	}
 
 	//Output:
-	//test: Query[template.DebugError](nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
+	//test: Query[runtime.DebugError](nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
 	//test: processResults(results) -> [status:OK] [rows:[{2023-01-26 12:09:12.426535 -0600 CST garage 45.1234}]]
 
 }

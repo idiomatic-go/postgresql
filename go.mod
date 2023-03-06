@@ -3,11 +3,12 @@ module github.com/idiomatic-go/postgresql
 go 1.18
 
 require (
-	github.com/idiomatic-go/motif v0.0.0-20230220150406-99a6fde8d620
+	github.com/idiomatic-go/motif v0.0.0-20230306140117-ac2ddebef524
 	github.com/jackc/pgx/v5 v5.2.0
 )
 
 require (
+	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect

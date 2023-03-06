@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
-	"github.com/idiomatic-go/motif/template"
 )
 
 const (
@@ -16,7 +15,7 @@ const (
 var execLoc = pkgPath + "/exec"
 
 // Exec - templated function for executing a SQL statement
-func Exec[E template.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (tag CommandTag, status *runtime.Status) {
+func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (tag CommandTag, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()

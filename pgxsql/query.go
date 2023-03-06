@@ -5,11 +5,10 @@ import (
 	"errors"
 	"github.com/idiomatic-go/motif/messaging"
 	"github.com/idiomatic-go/motif/runtime"
-	"github.com/idiomatic-go/motif/template"
 )
 
 // Query - templated function for a Query
-func Query[E template.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *runtime.Status) {
+func Query[E runtime.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()

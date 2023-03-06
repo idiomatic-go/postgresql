@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/idiomatic-go/motif/messaging"
-	"github.com/idiomatic-go/motif/template"
+	"github.com/idiomatic-go/motif/runtime"
 	"time"
 )
 
@@ -24,7 +24,7 @@ func Example_Startup() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
 
-		status := messaging.Ping[template.DebugError](nil, postgresUri)
+		status := messaging.Ping[runtime.DebugError](nil, postgresUri)
 		fmt.Printf("test: messaging.Ping() -> %v\n", status)
 
 	}
