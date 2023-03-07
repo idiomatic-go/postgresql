@@ -6,11 +6,11 @@
 PostgreSQL functions for timestamps and next values.
 
 ~~~
-// ExpandSelect - given a template, expand the template to build a where clause if configured
+// ExpandSelect - given a template, expand the template to build a WHERE clause if configured
 func ExpandSelect(template string, where []Attr) (string, error) {
 }
 
-// WriteInsert - build a SQL insert statement with values list
+// WriteInsert - build a SQL insert statement with a VALUES list
 func WriteInsert(sql string, values [][]any) (string, error) {
 }
 
@@ -18,7 +18,7 @@ func WriteInsert(sql string, values [][]any) (string, error) {
 func WriteUpdate(sql string, attrs []Attr, where []Attr) (string, error) {
 }
 
-// WriteDelete - build a SQL delete statement wth a where clause
+// WriteDelete - build a SQL delete statement with a WHERE clause
 func WriteDelete(sql string, where []Attr) (string, error) {
 }
 ~~~
