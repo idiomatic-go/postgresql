@@ -69,7 +69,7 @@ Resiliency for PostgresSQL database client calls is provided by an [Actuator][ac
 ~~~
 var actuatorApply messaging.ActuatorApply
 
-fn, ctx, limited = actuatorApply(ctx, &status, req.Uri, runtime.ContextRequestId(ctx), "GET")
+fn, ctx, limited = actuatorApply(ctx, statusCode func() int, req.Uri, runtime.ContextRequestId(ctx), "GET")
 defer fn()
 ~~~
 
