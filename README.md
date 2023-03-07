@@ -50,6 +50,31 @@ func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *run
 }
 ~~~
 
+The Request type is created as follows:
+
+~~~
+// BuildQueryUri - build an uri with the Query NSS
+func BuildQueryUri(resource string) string {
+	return buildUri(PostgresNID, QueryNSS, resource)
+}
+
+// BuildInsertUri - build an uri with the Insert NSS
+func BuildInsertUri(resource string) string {
+	return buildUri(PostgresNID, InsertNSS, resource)
+}
+
+// BuildUpdateUri - build an uri with the Update NSS
+func BuildUpdateUri(resource string) string {
+	return buildUri(PostgresNID, UpdateNSS, resource)
+}
+
+// BuildDeleteUri - build an uri with the Delete NSS
+func BuildDeleteUri(resource string) string {
+	return buildUri(PostgresNID, DeleteNSS, resource)
+}
+
+~~~
+
 Scanning of PostgreSQL rows into application types utilizes a templated interface, and corresponding templated Scan function. Care was taken to not leak
 any direct references to PostgresSQL specific packages.
 
