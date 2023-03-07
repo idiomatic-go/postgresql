@@ -8,8 +8,32 @@ PostgreSQL functions for timestamps and next values.
 ## pgxsql
 
 [PostgresSQL][pgxsqlpkg] provides the templated functions for query, exec, ping, and stat. Testing proxies are implemented for exec and query functions.
-The processing of host generated messaging for startup and ping events is also supported. Scanning of PostgreSQL rows into application types utilizes a
-templated interface, and corresponding templated Scan function. Care was taken to not leak any direct references to PostgresSQL specific packages.
+The processing of host generated messaging for startup and ping events is also supported. 
+
+~~~
+// Exec - templated function for executing a SQL statement
+func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (tag CommandTag, status *runtime.Status) {
+    // implementation details
+}
+
+// Query - templated function for a Query
+func Query[E runtime.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *runtime.Status) {
+// implementation details
+}
+
+// Ping - templated function for pinging the database cluster
+func Ping[E runtime.ErrorHandler](ctx context.Context) (status *runtime.Status) {
+// implementation details
+}
+
+// Stat - templated function for retrieving runtime stats
+func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *runtime.Status) {
+// implementation details
+}
+~~~
+
+Scanning of PostgreSQL rows into application types utilizes a templated interface, and corresponding templated Scan function. Care was taken to not leak
+any direct references to PostgresSQL specific packages.
 
 ~~~
 // Scanner - templated interface for scanning rows
