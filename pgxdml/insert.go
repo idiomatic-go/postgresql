@@ -23,7 +23,7 @@ func NewInsertValues(v []any) [][]any {
 	return append(values, v)
 }
 
-// WriteInsert - build a SQL insert statement with values list
+// WriteInsert - build a SQL insert statement with a VALUES list
 func WriteInsert(sql string, values [][]any) (string, error) {
 	sb := strings.Builder{}
 

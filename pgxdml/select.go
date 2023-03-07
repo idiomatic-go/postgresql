@@ -9,7 +9,7 @@ const (
 	whereClause = "{where}"
 )
 
-// ExpandSelect - given a template, expand the template to build a where clause if configured
+// ExpandSelect - given a template, expand the template to build a WHERE clause if configured
 func ExpandSelect(template string, where []Attr) (string, error) {
 	if template == "" {
 		return template, errors.New("template is empty")
