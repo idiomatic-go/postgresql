@@ -12,11 +12,11 @@ import (
 type pkg struct{}
 
 var (
-	Uri           = pkgPath
-	c             = make(chan messaging.Message, 1)
-	pkgPath       = reflect.TypeOf(any(pkg{})).PkgPath()
-	started       int64
-	actuatorApply messaging.ActuatorApply
+	Uri             = pkgPath
+	c               = make(chan messaging.Message, 1)
+	pkgPath         = reflect.TypeOf(any(pkg{})).PkgPath()
+	started         int64
+	controllerApply messaging.ControllerApply
 )
 
 // IsStarted - returns status of startup
@@ -33,7 +33,7 @@ func resetStarted() {
 }
 
 func init() {
-	actuatorApply = func(ctx context.Context, statusCode func() int, uri, requestId, method string) (func(), context.Context, bool) {
+	controllerApply = func(ctx context.Context, statusCode func() int, uri, requestId, method string) (func(), context.Context, bool) {
 		return func() {}, ctx, false
 	}
 	messaging.RegisterResource(Uri, c)
@@ -45,9 +45,9 @@ var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
 	case messaging.StartupEvent:
 		clientStartup(msg)
 		if IsStarted() {
-			apply := messaging.AccessActuatorApply(&msg)
+			apply := messaging.AccessControllerApply(&msg)
 			if apply != nil {
-				actuatorApply = apply
+				controllerApply = apply
 			}
 		}
 	case messaging.ShutdownEvent:

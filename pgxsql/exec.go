@@ -26,7 +26,7 @@ func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req 
 	if req == nil {
 		return tag, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	fn, ctx, limited = actuatorApply(ctx, messaging.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = controllerApply(ctx, messaging.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return tag, runtime.NewStatusCode(runtime.StatusRateLimited)

@@ -3,7 +3,7 @@ module github.com/idiomatic-go/postgresql
 go 1.18
 
 require (
-	github.com/idiomatic-go/motif v0.0.0-20230306142639-07d3dddb02ea
+	github.com/idiomatic-go/motif v0.0.0-20230310135155-9a998da5929e
 	github.com/jackc/pgx/v5 v5.2.0
 )
 

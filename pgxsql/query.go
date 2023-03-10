@@ -19,7 +19,7 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *Request, args ...an
 	if req == nil {
 		return nil, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	fn, ctx, limited = actuatorApply(ctx, messaging.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = controllerApply(ctx, messaging.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)

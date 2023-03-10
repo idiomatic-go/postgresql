@@ -17,7 +17,7 @@ func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *run
 	var limited = false
 	var fn func()
 
-	fn, ctx, limited = actuatorApply(ctx, messaging.NewStatusCode(&status), StatUri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = controllerApply(ctx, messaging.NewStatusCode(&status), StatUri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
